@@ -1,0 +1,9 @@
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\bin\Debug\netcoreapp2.0\CloudService.Common.deps.json
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\bin\Debug\netcoreapp2.0\CloudService.Common.dll
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\obj\Debug\netcoreapp2.0\CloudService.Common.csprojResolveAssemblyReference.cache
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\obj\Debug\netcoreapp2.0\CloudService.Common.csproj.CoreCompileInputs.cache
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\obj\Debug\netcoreapp2.0\CloudService.Common.AssemblyInfoInputs.cache
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\obj\Debug\netcoreapp2.0\CloudService.Common.AssemblyInfo.cs
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\bin\Debug\netcoreapp2.0\CloudService.Common.pdb
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\obj\Debug\netcoreapp2.0\CloudService.Common.dll
+D:\VS Projects\Scratch\Concept Scratch\CloudService\CloudService.Common\obj\Debug\netcoreapp2.0\CloudService.Common.pdb
