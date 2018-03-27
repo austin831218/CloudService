@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CloudService.Common;
-using CloudService.Model.Configuration;
+using CloudService.Common.Configuration;
 
 namespace CloudService.Host
 {
