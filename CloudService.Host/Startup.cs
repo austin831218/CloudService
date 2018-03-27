@@ -11,6 +11,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CloudService.Model.Configuration;
 using CloudService.Common;
+using CloudService.Service.WebApi;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
@@ -44,8 +45,8 @@ namespace CloudService.Host
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
                 options.SerializerSettings.Converters.Add(new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-dd HH:mm:ss" });
-            });
-
+            })
+            .AddControllersAsServices();
 
             services.AddCors(options =>
             {
@@ -53,14 +54,17 @@ namespace CloudService.Host
                     policy => policy.WithOrigins("http://localhost:5000"));
             });
             var builder = new ContainerBuilder();
-            
             var appCfg = new AppSettings(Configuration);
             //TODO: contact manage api to grab the predefined configurations. If it failed or undefined, use local settings instead.
 
             builder.RegisterInstance(appCfg).SingleInstance();
 
             builder.Populate(services);
+
+            builder.RegisterType<TestController>().PropertiesAutowired();
+
             this.ApplicationContainer = builder.Build();
+
             DependencyResolver.SetContainer(ApplicationContainer);
             return new AutofacServiceProvider(this.ApplicationContainer);
         }
