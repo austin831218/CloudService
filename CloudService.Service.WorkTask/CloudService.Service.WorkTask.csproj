@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CloudService.Common\CloudService.Common.csproj" />
+    <ProjectReference Include="..\CloudService.Infrastructure\CloudService.Infrastructure.csproj" />
+    <ProjectReference Include="..\CloudService.Model\CloudService.Model.csproj" />
   </ItemGroup>
 
 </Project>

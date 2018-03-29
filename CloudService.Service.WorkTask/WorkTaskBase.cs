@@ -4,27 +4,41 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using CloudService.Common;
-using CloudService.Common.Configuration;
+using CloudService.Infrastructure.Exceptions;
+using CloudService.Model;
 
 namespace CloudService.Service.WorkTask
 {
-    public abstract class WorkTaskBase<T>
+    public abstract class WorkTaskBase<T> : IConfigurable
     {
-        private AppSettings _cfg;
-        private ILogger _log;
+        const int _maxWorkerCount = 1000;
+        private ILogger<WorkTaskBase<T>> _log;
         private SemaphoreSlim _signal;
         private CancellationTokenSource _cancelSource;
         private Task _t;
         private bool _running = false;
+        private string _name = "Worker";
+        private int _interval = 100;
 
         public DateTime LastPerformedTime { get; private set; }
-        public WorkTaskBase()
+        public IList<Worker> Workers { get; private set; }
+        protected string Name
         {
-            _cfg = DependencyResolver.Resolve<AppSettings>();
-            _log = DependencyResolver.Resolve<ILogger<WorkTaskBase<T>>>();
+            get => _name;
+            set => _name = value;
+        }
+
+        protected WorkTaskBase()
+        {
             _cancelSource = new CancellationTokenSource();
-            _signal = new SemaphoreSlim(_cfg.InitialThreadCount, _cfg.MaxThreadCount);
+            _signal = new SemaphoreSlim(1, _maxWorkerCount);
+        }
+        protected WorkTaskBase(WorkTaskSettings<WorkTaskBase<T>> settings)
+        {
+            _log = settings.Logger;
+            _interval = settings.Interval;
+            _cancelSource = new CancellationTokenSource();
+            _signal = new SemaphoreSlim(settings.WorkerCount, _maxWorkerCount);
         }
         protected void Start()
         {
@@ -37,23 +51,20 @@ namespace CloudService.Service.WorkTask
             _running = true;
             Run();
         }
-
-        protected Task Stop()
+        public Task Stop()
         {
             _running = false;
             return _t;
         }
-        protected Task Stop(Action onStop)
+        public Task Stop(Action onStop)
         {
             onStop.Invoke();
             _running = false;
             return _t;
         }
-
         protected abstract IEnumerable<T> PrepareTask();
         protected abstract void Execute(T task);
         protected virtual void OnException(T task, Exception ex) { }
-
         private void Run()
         {
             _t = Task.Factory.StartNew(async () =>
@@ -64,7 +75,6 @@ namespace CloudService.Service.WorkTask
                     {
                         var tasks = PrepareTask();
                         if (tasks.Any())
-
                             foreach (T task in tasks)
                             {
                                 _signal.Wait();
@@ -85,14 +95,35 @@ namespace CloudService.Service.WorkTask
                                     }
 
                                 });
+
+                                Workers.Add(new Worker(Name, t));
                             }
                     }
                     finally
                     {
-                        await Task.Delay(_cfg.ThreadSuspend, _cancelSource.Token);
+                        await Task.Delay(_interval, _cancelSource.Token);
                     }
                 }
             });
+        }
+        public void IncreaseWorkerCount(int count)
+        {
+            if (_signal.CurrentCount + count > _maxWorkerCount || _signal.CurrentCount + count < 0)
+                throw new InvalidWokerCountException($"Max worker count can't be larger than {_maxWorkerCount.ToString()} or less than 0.");
+            else
+            {
+                if (count > 0)
+                {
+                    _signal.Release(count);
+                }
+                else
+                {
+                    for (var i = 0; i < count; i++)
+                    {
+                        _signal.WaitAsync(0);
+                    }
+                }
+            }
         }
     }
 }

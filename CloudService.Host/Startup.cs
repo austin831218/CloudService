@@ -12,6 +12,8 @@ using Autofac.Extensions.DependencyInjection;
 using CloudService.Common;
 using CloudService.Common.Configuration;
 using CloudService.Service.WebApi;
+using CloudService.Service.WorkTask;
+using CloudService.Infrastructure;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
@@ -58,6 +60,9 @@ namespace CloudService.Host
             //TODO: contact manage api to grab the predefined configurations. If it failed or undefined, use local settings instead.
 
             builder.RegisterInstance(appCfg).SingleInstance();
+
+            var taskManager = new TaskManager();
+            builder.Register(mgr => taskManager).SingleInstance();
 
             builder.Populate(services);
 
