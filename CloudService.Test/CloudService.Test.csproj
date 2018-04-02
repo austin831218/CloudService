@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CloudService.Common\CloudService.Common.csproj" />
+    <ProjectReference Include="..\CloudService.Service.WorkTask\CloudService.Service.WorkTask.csproj" />
+  </ItemGroup>
+
+</Project>

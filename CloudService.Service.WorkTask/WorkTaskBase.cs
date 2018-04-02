@@ -12,7 +12,6 @@ namespace CloudService.Service.WorkTask
     public abstract class WorkTaskBase<T> : IConfigurable
     {
         const int _maxWorkerCount = 1000;
-        private ILogger<WorkTaskBase<T>> _log;
         private SemaphoreSlim _signal;
         private CancellationTokenSource _cancelSource;
         private Task _t;
@@ -33,9 +32,8 @@ namespace CloudService.Service.WorkTask
             _cancelSource = new CancellationTokenSource();
             _signal = new SemaphoreSlim(1, _maxWorkerCount);
         }
-        protected WorkTaskBase(WorkTaskSettings<WorkTaskBase<T>> settings)
-        {
-            _log = settings.Logger;
+        protected WorkTaskBase(WorkTaskSettings settings)
+        { 
             _interval = settings.Interval;
             _cancelSource = new CancellationTokenSource();
             _signal = new SemaphoreSlim(settings.WorkerCount, _maxWorkerCount);

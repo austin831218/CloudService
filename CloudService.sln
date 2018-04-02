@@ -9,13 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Model", "Cloud
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Common", "CloudService.Common\CloudService.Common.csproj", "{2C4550D6-F16E-4A90-BCCF-209F986F89C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Service.WebApi", "CloudService.Service.WebApi\CloudService.Service.WebApi.csproj", "{2849B89E-568D-420F-A7A9-5DA43A0B8A05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Service.WebApi", "CloudService.Service.WebApi\CloudService.Service.WebApi.csproj", "{2849B89E-568D-420F-A7A9-5DA43A0B8A05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Interface", "CloudService.Interface\CloudService.Interface.csproj", "{4659922B-F193-46B8-B635-5C2A458D920D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Infrastructure", "CloudService.Infrastructure\CloudService.Infrastructure.csproj", "{8A5C29F4-49C2-4053-85D5-8CD47FD05AC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Infrastructure", "CloudService.Infrastructure\CloudService.Infrastructure.csproj", "{8A5C29F4-49C2-4053-85D5-8CD47FD05AC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Service.WorkTask", "CloudService.Service.WorkTask\CloudService.Service.WorkTask.csproj", "{4889959E-CB10-4D0D-8D7C-7CA37B3A55A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Test", "CloudService.Test\CloudService.Test.csproj", "{94233466-2137-4581-B5A8-A05E6192CE1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,10 +39,6 @@ Global
 		{2849B89E-568D-420F-A7A9-5DA43A0B8A05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2849B89E-568D-420F-A7A9-5DA43A0B8A05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2849B89E-568D-420F-A7A9-5DA43A0B8A05}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4659922B-F193-46B8-B635-5C2A458D920D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4659922B-F193-46B8-B635-5C2A458D920D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4659922B-F193-46B8-B635-5C2A458D920D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4659922B-F193-46B8-B635-5C2A458D920D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A5C29F4-49C2-4053-85D5-8CD47FD05AC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A5C29F4-49C2-4053-85D5-8CD47FD05AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A5C29F4-49C2-4053-85D5-8CD47FD05AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{4889959E-CB10-4D0D-8D7C-7CA37B3A55A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4889959E-CB10-4D0D-8D7C-7CA37B3A55A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4889959E-CB10-4D0D-8D7C-7CA37B3A55A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94233466-2137-4581-B5A8-A05E6192CE1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94233466-2137-4581-B5A8-A05E6192CE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94233466-2137-4581-B5A8-A05E6192CE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94233466-2137-4581-B5A8-A05E6192CE1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
