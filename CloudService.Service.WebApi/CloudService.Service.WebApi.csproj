@@ -8,4 +8,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CloudService.Common\CloudService.Common.csproj" />
+    <ProjectReference Include="..\CloudService.Infrastructure\CloudService.Infrastructure.csproj" />
+    <ProjectReference Include="..\CloudService.Service.WorkTask\CloudService.Service.WorkTask.csproj" />
+  </ItemGroup>
+
 </Project>

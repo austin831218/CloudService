@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -16,34 +17,53 @@ namespace CloudService.Service.WorkTask
         private CancellationTokenSource _cancelSource;
         private Task _t;
         private bool _running = false;
-        private string _name = "Worker";
+        private string _taskName = string.Empty;
         private int _interval = 100;
 
         public DateTime LastPerformedTime { get; private set; }
-        public IList<Worker> Workers { get; private set; }
-        protected string Name
+        public ConcurrentDictionary<int, Worker> Workers { get; private set; }
+        //public ConcurrentBag<T> Errors { get; private set; }
+        public string Name
         {
-            get => _name;
-            set => _name = value;
+            get => _taskName;
+            private set => _taskName = value;
         }
+        //protected WorkTaskBase()
+        //{
+        //    Workers = new ConcurrentDictionary<int, Worker>();
+        //    _cancelSource = new CancellationTokenSource();
+        //    _signal = new SemaphoreSlim(1, _maxWorkerCount);
+        //}
 
-        protected WorkTaskBase()
+        protected WorkTaskBase(string name)
         {
+            Name = name;
+            Workers = new ConcurrentDictionary<int, Worker>();
             _cancelSource = new CancellationTokenSource();
             _signal = new SemaphoreSlim(1, _maxWorkerCount);
         }
         protected WorkTaskBase(WorkTaskSettings settings)
-        { 
+        {
+            Workers = new ConcurrentDictionary<int, Worker>();
             _interval = settings.Interval;
             _cancelSource = new CancellationTokenSource();
             _signal = new SemaphoreSlim(settings.WorkerCount, _maxWorkerCount);
         }
-        protected void Start()
+        protected WorkTaskBase(string name, WorkTaskSettings settings)
+        {
+            Name = name;
+            _interval = settings.Interval;
+            Workers = new ConcurrentDictionary<int, Worker>();
+            _cancelSource = new CancellationTokenSource();
+            _signal = new SemaphoreSlim(settings.WorkerCount, _maxWorkerCount);
+        }
+
+        public void Start()
         {
             _running = true;
             Run();
         }
-        protected void Start(Action onStart)
+        public void Start(Action onStart)
         {
             onStart.Invoke();
             _running = true;
@@ -84,17 +104,18 @@ namespace CloudService.Service.WorkTask
                                     }
                                     catch (Exception ex)
                                     {
+                                        //Errors.Add(task);
                                         OnException(task, ex);
                                     }
                                     finally
                                     {
                                         LastPerformedTime = DateTime.Now;
                                         _signal.Release();
+                                        Workers.TryRemove(Task.CurrentId.Value, out Worker w);
                                     }
-
                                 });
 
-                                Workers.Add(new Worker(Name, t));
+                                Workers.TryAdd(t.Id, new Worker(t));
                             }
                     }
                     finally

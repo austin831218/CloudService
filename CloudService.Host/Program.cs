@@ -7,6 +7,8 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CloudService.Common;
 using CloudService.Common.Configuration;
+using CloudService.Service.WorkTask;
+using CloudService.Test;
 
 namespace CloudService.Host
 {
@@ -17,9 +19,8 @@ namespace CloudService.Host
         {
             var host = BuildWebHost(args);
 
-            var appCfg = DependencyResolver.Resolve<AppSettings>();
-
-            //TODO: launch services
+            //var appCfg = DependencyResolver.Resolve<AppSettings>();
+            BuildWorkTasks();
 
             host.Run();
         }
@@ -29,5 +30,15 @@ namespace CloudService.Host
                 .UseEnvironment(Environment)
                 .UseStartup<Startup>()
                 .Build();
+
+        static void BuildWorkTasks()
+        {
+            //TODO: launch services
+            var settings = new WorkTaskSettings { Interval = 100, WorkerCount = 5 };
+            var myTest = new MyTestWorker("MyWorkTask", settings);
+            myTest.Start();
+            var taskManager = DependencyResolver.Resolve<TaskManager>();
+            taskManager.WorkTasks.Add(myTest);
+        }
     }
 }

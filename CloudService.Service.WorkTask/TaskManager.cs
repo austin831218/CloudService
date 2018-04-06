@@ -6,10 +6,11 @@ namespace CloudService.Service.WorkTask
 {
     public class TaskManager
     {
-        public IList<IConfigurable> WorkTasks { get; }
+        public IList<IConfigurable> WorkTasks { get; private set; }
         public TaskManager()
         {
             WorkTasks = new List<IConfigurable>();
         }
     }
 }
+

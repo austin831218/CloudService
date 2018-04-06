@@ -32,6 +32,7 @@
     <ProjectReference Include="..\CloudService.Model\CloudService.Model.csproj" />
     <ProjectReference Include="..\CloudService.Service.WebApi\CloudService.Service.WebApi.csproj" />
     <ProjectReference Include="..\CloudService.Service.WorkTask\CloudService.Service.WorkTask.csproj" />
+    <ProjectReference Include="..\CloudService.Test\CloudService.Test.csproj" />
   </ItemGroup>
 
 </Project>
