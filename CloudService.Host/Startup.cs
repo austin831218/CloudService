@@ -16,6 +16,7 @@ using CloudService.Service.WorkTask;
 using CloudService.Infrastructure;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
+using NLog.Extensions.Logging;
 
 namespace CloudService.Host
 {
@@ -77,9 +78,7 @@ namespace CloudService.Host
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
-            loggerFactory.AddConsole(this.Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
+            loggerFactory.AddNLog();
             app.UseMvc();
 
             app.UseCors("TestServer");

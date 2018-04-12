@@ -9,6 +9,8 @@ using CloudService.Common;
 using CloudService.Common.Configuration;
 using CloudService.Service.WorkTask;
 using CloudService.Test;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace CloudService.Host
 {
@@ -29,6 +31,7 @@ namespace CloudService.Host
             WebHost.CreateDefaultBuilder()
                 .UseEnvironment(Environment)
                 .UseStartup<Startup>()
+                .ConfigureLogging(o=> o.SetMinimumLevel(LogLevel.Trace))
                 .Build();
 
         static void BuildWorkTasks()
