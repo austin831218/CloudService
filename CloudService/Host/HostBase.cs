@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using CloudService.Job;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,12 +11,14 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NLog.Extensions.Logging;
+using NLog;
 
 namespace CloudService.Host
 {
     public class HostBase
     {
         public static IContainer Container => _container;
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
 
         private static IContainer _container;
@@ -76,6 +80,18 @@ namespace CloudService.Host
             _builderOption = builderOpt;
             _serviceOption = serviceOpt;
             _appBuilderOption = appBuilderOpt;
+        }
+
+        public void AddJobAssemblies(params Assembly[] assemblies)
+        {
+            //TODO: check duplicated job names
+            foreach (var a in assemblies)
+            {
+                _containerBuilder.RegisterAssemblyTypes(a)
+                    .Where(x => x is IJob)
+                    .AsImplementedInterfaces()
+                    .InstancePerLifetimeScope();
+            }
         }
 
         public void Start()
