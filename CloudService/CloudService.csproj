@@ -19,4 +19,9 @@
     <Folder Include="Configuration\" />
     <Folder Include="Exceptions\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Job\ICronJob.cs" />
+    <Compile Remove="Job\ILongRunningJob.cs" />
+    <Compile Remove="Infrastructure\JobArranger.cs" />
+  </ItemGroup>
 </Project>
