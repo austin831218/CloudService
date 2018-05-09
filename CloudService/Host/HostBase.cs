@@ -15,6 +15,7 @@ using NLog;
 using System.Collections.Generic;
 using System.Linq;
 using CloudService.Infrastructure;
+using NCrontab;
 
 namespace CloudService.Host
 {
@@ -30,12 +31,12 @@ namespace CloudService.Host
 		private Action<IServiceCollection> _serviceOption;
 		private Action<ContainerBuilder> _builderOption;
 		private Action<IApplicationBuilder> _appBuilderOption;
-		private List<JobFeature> _jobFeatures;
+		private List<JobDescriber> _jobFeatures;
 
 		public HostBase(IHostingEnvironment env)
 		{
 			_containerBuilder = new ContainerBuilder();
-			_jobFeatures = new List<JobFeature>();
+			_jobFeatures = new List<JobDescriber>();
 			var builder = new ConfigurationBuilder()
 			   .SetBasePath(env.ContentRootPath)
 			   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -57,7 +58,7 @@ namespace CloudService.Host
 				_builderOption.Invoke(_containerBuilder);
 			}
 			_containerBuilder.Populate(services);
-			_containerBuilder.Register<JobManager>(c=> new JobManager(_jobFeatures)).SingleInstance();
+			_containerBuilder.Register<JobManager>(c => new JobManager(_jobFeatures, c.Resolve<IJobQueue>())).SingleInstance();
 
 			_container = _containerBuilder.Build();
 			return new AutofacServiceProvider(_container);
@@ -97,7 +98,7 @@ namespace CloudService.Host
 			{
 				throw new Exception($"Duplicated Job Names {name}");
 			}
-			_jobFeatures.Add(new JobFeature
+			_jobFeatures.Add(new JobDescriber
 			{
 				Name = name,
 				RequestThreads = requestThreads,
@@ -112,7 +113,7 @@ namespace CloudService.Host
 			{
 				throw new Exception($"Duplicated Job Names {name}");
 			}
-			_jobFeatures.Add(new JobFeature
+			_jobFeatures.Add(new JobDescriber
 			{
 				Name = name,
 				RequestThreads = requestThreads,
@@ -127,12 +128,17 @@ namespace CloudService.Host
 			{
 				throw new Exception($"Duplicated Job Names {name}");
 			}
-			_jobFeatures.Add(new JobFeature
+
+			var schedule = CrontabSchedule.Parse(cronExpression, new CrontabSchedule.ParseOptions
+			{
+				IncludingSeconds = true
+			});
+			_jobFeatures.Add(new JobDescriber
 			{
 				Name = name,
 				RequestThreads = requestThreads,
 				JobType = JobType.Scheduled,
-				CronExpression = cronExpression
+				Schedule = schedule
 			});
 			_containerBuilder.RegisterType(typeof(T)).Named<IJob>(name);
 		}
