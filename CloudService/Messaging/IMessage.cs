@@ -9,7 +9,7 @@ namespace CloudService.Messaging
 		LogLevel Level { get; set; }
 		string JobName { get; set; }
 		string JobThreadId { get; set; }
-		string Message { get; set; }
+		string Content { get; set; }
 		object Data { get; set; }
     }
 }
