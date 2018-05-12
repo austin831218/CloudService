@@ -23,14 +23,14 @@ namespace CloudService.Host
 
             //var appCfg = DependencyResolver.Resolve<AppSettings>();
             BuildWorkTasks();
-
+            
             host.Run();
         }
 
-        static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder()
-                .UseEnvironment(Environment)
-                .UseStartup<Startup>()
+		static IWebHost BuildWebHost(string[] args) =>
+			WebHost.CreateDefaultBuilder()
+				.UseEnvironment(Environment)
+				.UseStartup<Startup>()
                 .ConfigureLogging(o=> o.SetMinimumLevel(LogLevel.Trace))
                 .Build();
 

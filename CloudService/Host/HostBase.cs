@@ -104,7 +104,7 @@ namespace CloudService.Host
 				RequestThreads = requestThreads,
 				JobType = JobType.Repeating
 			});
-			_containerBuilder.RegisterType(typeof(T)).Named<IJob>(name);
+			_containerBuilder.RegisterType(typeof(T)).Named<IJob>(name);            
 		}
 
 		public void RegisterLongRunningJob<T>(string name, int requestThreads)
