@@ -6,6 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Configuration\**" />
+    <Compile Remove="Exceptions\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <None Remove="Configuration\**" />
+    <None Remove="Exceptions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.7" />
     <PackageReference Include="Autofac" Version="4.8.0" />
@@ -14,9 +23,6 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Job\" />
-    <Folder Include="Configuration\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="Messaging\" />
   </ItemGroup>
   <ItemGroup>

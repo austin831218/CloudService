@@ -1,7 +1,7 @@
 ﻿using System;
 namespace CloudService.Infrastructure
 {
-    public interface JobService
+    internal interface JobService
     {
     }
 }

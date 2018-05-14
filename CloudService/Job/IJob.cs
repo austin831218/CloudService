@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CloudService.Infrastructure;
+using System;
 namespace CloudService.Job
 {
     public interface IJob
-    {
-        Guid Identifier { get; }
-		void Stop();
-        void Execute();
+    {       
+		void Stop(IServiceContext serviceContext);
+        void Execute(IServiceContext serviceContext);
     }
 }

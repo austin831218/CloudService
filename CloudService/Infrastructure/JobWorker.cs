@@ -1,7 +1,7 @@
 ﻿using System;
 namespace CloudService.Infrastructure
 {
-    public class JobWorker
+    internal class JobWorker
     {
         public JobWorker()
         {
