@@ -5,13 +5,20 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace CloudService.Infrastructure
+namespace CloudService.Queues
 {
-    internal class MemoryJobQueue : IJobQueue
+    public interface IQueue
+    {
+        void Enqueue(string item, int number);
+        string Dequeue();
+        int Length { get; }
+    }
+
+    internal class MemoryQueue : IQueue
     {
         private ConcurrentQueue<string> _q;
         public int Length => _q.Count;
-        public MemoryJobQueue()
+        public MemoryQueue()
         {
             _q = new ConcurrentQueue<string>();
         }

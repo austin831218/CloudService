@@ -1,5 +1,6 @@
 ﻿using CloudService.Infrastructure;
 using CloudService.Job;
+using CloudService.Queues;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,11 @@ namespace CloudService.Scheduler
         public IJobDescriber Describer { get; private set; }
         private CancellationTokenSource _cancelTokenSource;
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private IJobQueue _queue;
-        public JobScheduler(IJobDescriber describer, IJobQueue queue)
+        private IQueue _queue;
+        public JobScheduler(IJobDescriber describer, IQueueManager qMan)
         {
             Describer = describer;
-            _queue = queue;
+            _queue = qMan.GetQueue("job");
         }
 
         public void Start()
