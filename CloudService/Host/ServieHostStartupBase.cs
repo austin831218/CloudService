@@ -21,13 +21,11 @@ namespace CloudService.Host
 {
     public class ServieHostStartupBase
     {
-
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         public IConfigurationRoot Configuration { get; private set; }
 
         public ServieHostStartupBase(IHostingEnvironment env)
         {
-
             var builder = new ConfigurationBuilder()
                .SetBasePath(env.ContentRootPath)
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -39,29 +37,21 @@ namespace CloudService.Host
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+
         }
 
         public virtual void ConfigureContainer(ContainerBuilder builder)
         {
-           
+
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
+        public virtual void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
             loggerFactory.AddNLog();
             app.UseMvcWithDefaultRoute();
-            var serviceHost = app.ApplicationServices.GetService<ServiceHost>();
-            serviceHost.Container =app.ApplicationServices;
+            //var serviceHost = app.ApplicationServices.GetService<ServiceHost>();
+            //serviceHost.Container = app.ApplicationServices;
+            //serviceHost.Start();
         }
-
-
-
-
-
-
-
-
-
     }
 }

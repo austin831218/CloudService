@@ -1,6 +1,7 @@
 ﻿using CloudService.Queues;
 using CloudService.Scheduler;
-using System;
+using System.Threading;
+
 namespace CloudService.Infrastructure
 {
     internal interface IJobService
@@ -11,6 +12,7 @@ namespace CloudService.Infrastructure
     {
         private readonly ScheduleManager _scheduleManager;
         private readonly IQueue _q;
+        private CancellationTokenSource _cancelTS;
         public JobService(ScheduleManager scheduleManager, IQueue q)
         {
             _scheduleManager = scheduleManager;
@@ -20,8 +22,7 @@ namespace CloudService.Infrastructure
 
         public void Start()
         {
-            _scheduleManager.Start();
-
+            
         }
     }
 }

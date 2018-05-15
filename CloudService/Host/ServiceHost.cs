@@ -24,9 +24,15 @@ namespace CloudService.Host
 {
     public class ServiceHost
     {
+        private readonly NLog.ILogger _logger = LogManager.GetCurrentClassLogger();
         private List<Action<ContainerBuilder>> _buildActions;
         public IServiceProvider Container { get; internal set; }
         public IServiceCollection Services { get; private set; }
+        private bool _isScheduler = false;
+        internal bool IsScheduler => _isScheduler;
+
+        private bool _isWorker = false;
+        internal bool IsWorker => _isWorker;
 
         public ServiceHost(IServiceCollection services)
         {
@@ -61,6 +67,7 @@ namespace CloudService.Host
 
         private void ScheduleJob<T>(string name, int requestThreads, string cronExpression, JobType jobType) where T : IJob
         {
+            _isScheduler = true;
             CrontabSchedule schedule = null;
             if (jobType == JobType.Scheduled)
             {
@@ -79,6 +86,15 @@ namespace CloudService.Host
 
         public ServiceHost OnDuty<T>(string name) where T : IJob
         {
+            if (!_isWorker)
+            {
+                _isWorker = true;
+                _buildActions.Add(b =>
+                {
+                    b.RegisterType<JobService>().SingleInstance();
+                });
+            }
+
             _buildActions.Add(b =>
             {
                 b.RegisterType(typeof(T)).AsImplementedInterfaces().Named<IJob>(name).InstancePerLifetimeScope();
@@ -89,6 +105,32 @@ namespace CloudService.Host
         public void BuildServies()
         {
             this.Services.AddAutofac(b => this._buildActions.ForEach(a => a.Invoke(b)));
+        }
+
+        internal bool Start()
+        {
+            _logger.Info("CloudService is staring");
+            if (!_isWorker && !_isScheduler)
+            {
+                return false;
+            }
+            if (_isScheduler)
+            {
+                var scheduler = this.Container.GetService<ScheduleManager>();
+                scheduler.Start();
+            }
+            if (_isWorker)
+            {
+                var jobService = this.Container.GetService<JobService>();
+                jobService.Start();
+            }
+            _logger.Info("CloudService is started");
+            return true;
+        }
+
+        internal void Stop()
+        {
+            _logger.Info("CloudService is stopping");
         }
     }
 }

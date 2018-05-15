@@ -17,7 +17,7 @@ namespace TestHost
                 s.BuildServies();
             })
             .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<ServieHostStartupBase>()
+            .UseStartup<Startup>()
             .UseUrls("http://*:10000")
             .Build();
 

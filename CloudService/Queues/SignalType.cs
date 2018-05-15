@@ -8,6 +8,7 @@ namespace CloudService.Queues
     {
         JobScheduled,
         JobCompleted,
-        JobError
+        JobError,
+        DecreaseJobThread
     }
 }

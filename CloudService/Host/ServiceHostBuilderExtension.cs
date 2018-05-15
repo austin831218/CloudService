@@ -23,7 +23,17 @@ namespace CloudService.Host
     {
         public static IWebHostBuilder UseCloudService(this IWebHostBuilder builder, Action<ServiceHost> options)
         {
-            return builder.ConfigureServices(s => options(new ServiceHost(s)));
+            return builder.ConfigureServices(s =>
+            {
+                var h = new ServiceHost(s);
+                s.AddMvcCore();
+                options(h);
+                s.AddSingleton<ServiceHost>(p =>
+                {
+                    h.Container = p;
+                    return h;
+                });
+            });
         }
     }
 }
