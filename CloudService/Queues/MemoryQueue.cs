@@ -9,34 +9,34 @@ namespace CloudService.Queues
 {
     public interface IQueue
     {
-        void Enqueue(string item, int number);
-        string Dequeue();
-        int Length { get; }
+        void Enqueue(ISignal item, int number);
+        ISignal DequeueOrWait(int ms);
+        int Count { get; }
     }
 
     internal class MemoryQueue : IQueue
     {
-        private ConcurrentQueue<string> _q;
-        public int Length => _q.Count;
+        private BlockingCollection<ISignal> _q;
+        public int Count => _q.Count;
         public MemoryQueue()
         {
-            _q = new ConcurrentQueue<string>();
+            _q = new BlockingCollection<ISignal>(new ConcurrentQueue<ISignal>());
         }
 
-        public string Dequeue()
+        public ISignal DequeueOrWait(int ms)
         {
-            if (_q.TryDequeue(out string item))
+            if (_q.TryTake(out ISignal item, ms))
             {
                 return item;
             }
             return null;
         }
 
-        public void Enqueue(string item, int number)
+        public void Enqueue(ISignal item, int number)
         {
             for (var i = 0; i < number; i++)
             {
-                _q.Enqueue(item);
+                _q.Add(item);
             }
 
         }

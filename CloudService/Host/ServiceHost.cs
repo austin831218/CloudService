@@ -36,7 +36,7 @@ namespace CloudService.Host
            {
                b.Register(c => this).SingleInstance();
            });
-            _buildActions.Add(b => b.RegisterType<ScheduleManager>().As<IQueueManager>().SingleInstance());
+            _buildActions.Add(b => b.RegisterType<MemoryQueue>().As<IQueue>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<ScheduleManager>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<MemoryHistoryStore>().As<IHistoryStore>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<WebSocketMessageBroadcaster>().As<IMessageBroadcaster>().SingleInstance());
@@ -73,7 +73,7 @@ namespace CloudService.Host
             _buildActions.Add(b =>
             {
                 b.Register(c => new JobDescriber<T>(name, requestThreads, cronExpression, jobType)).AsSelf().AsImplementedInterfaces().Named<JobDescriber<T>>(name).SingleInstance();
-                b.Register(c => new JobScheduler<T>(c.Resolve<JobDescriber<T>>(), c.Resolve<IQueueManager>())).AsSelf().AsImplementedInterfaces().Named<JobScheduler<T>>(name).SingleInstance();
+                b.Register(c => new JobScheduler<T>(c.Resolve<JobDescriber<T>>(), c.Resolve<IQueue>())).AsSelf().AsImplementedInterfaces().Named<JobScheduler<T>>(name).SingleInstance();
             });
         }
 

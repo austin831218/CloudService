@@ -23,10 +23,10 @@ namespace CloudService.Scheduler
         private CancellationTokenSource _cancelTokenSource;
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private IQueue _queue;
-        public JobScheduler(IJobDescriber describer, IQueueManager qMan)
+        public JobScheduler(IJobDescriber describer, IQueue q)
         {
             Describer = describer;
-            _queue = qMan.GetQueue("job");
+            _queue = q;
         }
 
         public void Start()
@@ -56,7 +56,7 @@ namespace CloudService.Scheduler
                         {
                             Describer.Cron.NextTime = Describer.Cron.Crontab.GetNextOccurrence(now);
                             Describer.Cron.LastScheduledTime = now;
-                            _queue.Enqueue(Describer.Name, Describer.RequestThreads);
+                            _queue.Enqueue(new Signal(SignalType.JobScheduled, Describer.Name), Describer.RequestThreads);
                         }
                         Thread.Sleep(100);
                     }
@@ -64,7 +64,7 @@ namespace CloudService.Scheduler
             }
             else
             {
-                _queue.Enqueue(Describer.Name, Describer.RequestThreads);
+                _queue.Enqueue(new Signal(SignalType.JobScheduled, Describer.Name), Describer.RequestThreads);
             }
         }
 
