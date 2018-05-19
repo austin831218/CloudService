@@ -20,7 +20,7 @@ namespace TestHost
             .UseStartup<Startup>()
             .UseUrls("http://*:10000")
             .Build();
-
+            
             host.Run();
             var ch = host.Services.GetService(typeof(ServiceHost)) as ServiceHost;
         }

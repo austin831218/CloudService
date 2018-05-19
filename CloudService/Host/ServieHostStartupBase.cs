@@ -49,9 +49,6 @@ namespace CloudService.Host
         {
             loggerFactory.AddNLog();
             app.UseMvcWithDefaultRoute();
-            //var serviceHost = app.ApplicationServices.GetService<ServiceHost>();
-            //serviceHost.Container = app.ApplicationServices;
-            //serviceHost.Start();
         }
     }
 }

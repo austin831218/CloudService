@@ -11,6 +11,7 @@ namespace CloudService.Queues
     {
         void Enqueue(ISignal item, int number);
         ISignal DequeueOrWait(int ms);
+        ISignal DequeueOrWait(TimeSpan ts);
         int Count { get; }
     }
 
@@ -30,6 +31,10 @@ namespace CloudService.Queues
                 return item;
             }
             return null;
+        }
+        public ISignal DequeueOrWait(TimeSpan ts)
+        {
+            return DequeueOrWait(ts.Milliseconds);
         }
 
         public void Enqueue(ISignal item, int number)

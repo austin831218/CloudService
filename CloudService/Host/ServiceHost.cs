@@ -47,6 +47,16 @@ namespace CloudService.Host
             _buildActions.Add(b => b.RegisterType<MemoryHistoryStore>().As<IHistoryStore>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<WebSocketMessageBroadcaster>().As<IMessageBroadcaster>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<ServiceContext>().As<IServiceContext>().SingleInstance());
+            _buildActions.Add(b => b.RegisterType<JobWorkerManager>().As<IJobWorkerManager>().SingleInstance());
+            _buildActions.Add(b => b.Register<IHostConifuration>(c => new HostConfiguration()).SingleInstance());
+        }
+
+        public ServiceHost ConfigService(Action<IHostConifuration> configurationOptions)
+        {
+            var cfg = new HostConfiguration();
+            configurationOptions(cfg);
+            _buildActions.Add(b => b.Register<IHostConifuration>(c => cfg).SingleInstance());
+            return this;
         }
 
         public ServiceHost ScheduleJob<T>(string name, int requestThreads, string cronExpression) where T : IJob
