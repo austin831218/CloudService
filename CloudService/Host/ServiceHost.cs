@@ -46,7 +46,6 @@ namespace CloudService.Host
             _buildActions.Add(b => b.RegisterType<ScheduleManager>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<MemoryHistoryStore>().As<IHistoryStore>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<WebSocketMessageBroadcaster>().As<IMessageBroadcaster>().SingleInstance());
-            _buildActions.Add(b => b.RegisterType<ServiceContext>().As<IServiceContext>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<JobWorkerManager>().As<IJobWorkerManager>().SingleInstance());
             _buildActions.Add(b => b.Register<IHostConifuration>(c => new HostConfiguration()).SingleInstance());
         }
@@ -101,7 +100,7 @@ namespace CloudService.Host
                 _isWorker = true;
                 _buildActions.Add(b =>
                 {
-                    b.RegisterType<JobService>().SingleInstance();
+                    b.RegisterType<JobService>().As<IJobService>().SingleInstance();
                 });
             }
 
@@ -131,7 +130,7 @@ namespace CloudService.Host
             }
             if (_isWorker)
             {
-                var jobService = this.Container.GetService<JobService>();
+                var jobService = this.Container.GetService<IJobService>();
                 jobService.Start();
             }
             _logger.Info("CloudService is started");
@@ -141,6 +140,16 @@ namespace CloudService.Host
         internal void Stop()
         {
             _logger.Info("CloudService is stopping");
+            if (_isScheduler)
+            {
+                var scheduler = this.Container.GetService<ScheduleManager>();
+                scheduler.Stop();
+            }
+            if (_isWorker)
+            {
+                var jobService = this.Container.GetService<IJobService>();
+                jobService.Stop();
+            }
         }
     }
 }

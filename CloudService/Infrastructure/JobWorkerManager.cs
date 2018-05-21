@@ -1,21 +1,25 @@
 ﻿using CloudService.Job;
 using System;
 using System.Collections.Concurrent;
-using System.Text;
+using System.Linq;
 using Autofac;
 using CloudService.Queues;
 using System.Threading;
 using CloudService.Host;
+using CloudService.Messaging;
+using System.Threading.Tasks;
 
 namespace CloudService.Infrastructure
 {
     internal interface IJobWorkerManager
     {
+        ConcurrentDictionary<Guid, JobWorker> Workers { get; }
         JobWorker StartNew(ILifetimeScope scope,
             IJobDescriber describer,
             CancellationToken tk,
-            IServiceContext context,
-            IQueue q);
+            IQueue q,
+            IHistoryStore hs);
+
     }
 
     internal class JobWorkerManager : IJobWorkerManager
@@ -34,11 +38,12 @@ namespace CloudService.Infrastructure
         public JobWorker StartNew(ILifetimeScope scope,
             IJobDescriber describer,
             CancellationToken tk,
-            IServiceContext context,
-            IQueue q)
+            IQueue q,
+            IHistoryStore hs)
         {
             _ss.Wait();
-            var worker = new JobWorker(scope, describer, tk, context, q);
+            var context = new ServiceContext(describer, q, hs, Guid.NewGuid());
+            var worker = new JobWorker(scope, describer, tk, q, context, hs);
             worker.Work(w =>
             {
                 Workers.TryRemove(w.ID, out JobWorker k);
@@ -81,5 +86,7 @@ namespace CloudService.Infrastructure
             return true;
 
         }
+
+
     }
 }

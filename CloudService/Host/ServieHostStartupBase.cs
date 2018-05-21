@@ -48,6 +48,13 @@ namespace CloudService.Host
         public virtual void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
             loggerFactory.AddNLog();
+            var service = app.ApplicationServices.GetService<ServiceHost>();
+            service.Container = app.ApplicationServices;
+            service.Start();
+            appLifetime.ApplicationStopping.Register(() =>
+            {
+                service.Stop();
+            });
             app.UseMvcWithDefaultRoute();
         }
     }

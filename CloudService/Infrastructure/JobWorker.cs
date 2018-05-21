@@ -6,6 +6,7 @@ using CloudService.Job;
 using CloudService.Queues;
 using NLog;
 using System.Collections.Concurrent;
+using CloudService.Messaging;
 
 namespace CloudService.Infrastructure
 {
@@ -22,16 +23,17 @@ namespace CloudService.Infrastructure
         public JobWorker(ILifetimeScope scope,
             IJobDescriber describer,
             CancellationToken tk,
+            IQueue q,
             IServiceContext context,
-            IQueue q)
+            IHistoryStore hs)
         {
-            this.ID = Guid.NewGuid();
+            this.ID = context.WorkerId;
             _scope = scope;
             _describer = describer;
             _linkedCTS = CancellationTokenSource.CreateLinkedTokenSource(tk);
             _q = q;
             _context = context;
-            _logger = LogManager.GetLogger($"{_describer.Name} - Worker", typeof(JobWorker));
+            _logger = LogManager.GetLogger(_describer.Name);
         }
 
         public void Work(Action<JobWorker> callback)
@@ -53,17 +55,19 @@ namespace CloudService.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    _logger.Fatal(ex, $"Can't resolve job {_describer.Name}");
+
+                    _context.Fatal(ex, $"Can't resolve job {_describer.Name}");
                 }
                 try
                 {
+                    _context.Info($"Job {_describer.Name} staring");
                     job.Execute(_context, _linkedCTS.Token);
-                    _logger.Info($"Job {_describer.Name} execute completed");
+                    _context.Info($"Job {_describer.Name} execute completed");
                     _q.Enqueue(new Signal(SignalType.JobCompleted, _describer.Name), 1);
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex, $"Execute job {_describer.Name} failed");
+                    _context.Error(ex, $"Execute job {_describer.Name} failed");
                     _q.Enqueue(new Signal(SignalType.JobError, _describer.Name, ex.Message), 1);
                 }
 

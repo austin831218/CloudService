@@ -28,11 +28,7 @@ namespace CloudService.Host
                 var h = new ServiceHost(s);
                 s.AddMvcCore();
                 options(h);
-                s.AddSingleton<ServiceHost>(p =>
-                {
-                    h.Container = p;
-                    return h;
-                });
+                
             });
         }
     }

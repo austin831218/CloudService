@@ -4,24 +4,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using NLog;
 
 namespace TestHost.Jobs
 {
-    public class TestCronJob1 : IJob
+    public class RepeatingJob1 : IJob
     {
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         public void Execute(IServiceContext serviceContext, CancellationToken token)
         {
 
             int count = 10;
             while (count > 0 && !token.IsCancellationRequested)
             {
-                serviceContext.Info("I'm doing cronjob {0}", count);
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                serviceContext.Info("I'm doing repeating job {0}", count);
+                Thread.Sleep(TimeSpan.FromSeconds(1));
                 count--;
             }
         }
-
     }
 }

@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using Autofac;
+using CloudService.Messaging;
 
 namespace CloudService.Infrastructure
 {
     internal interface IJobService
     {
+        void Start();
+        void Stop();
     }
 
     internal class JobService : IJobService
@@ -21,20 +24,20 @@ namespace CloudService.Infrastructure
         private readonly ILogger _logger = LogManager.GetLogger("JobService", typeof(JobService));
         private readonly IEnumerable<IJobDescriber> _describers;
         private readonly IQueue _q;
-        private readonly IServiceContext _context;
         private readonly IJobWorkerManager _workerManager;
         private CancellationTokenSource _cancelTokenSource;
         private ILifetimeScope _scope;
         private List<ISignal> _decreaseSignalHolder;
+        private readonly IHistoryStore _hs;
 
-        public JobService(IEnumerable<IJobDescriber> describers, IQueue q, IServiceContext context, IJobWorkerManager workerManager, ILifetimeScope scope)
+        public JobService(IEnumerable<IJobDescriber> describers, IQueue q, IJobWorkerManager workerManager, ILifetimeScope scope, IHistoryStore hs)
         {
             _describers = describers;
             _q = q;
-            _context = context;
             _decreaseSignalHolder = new List<ISignal>();
             _workerManager = workerManager;
             _scope = scope;
+            _hs = hs;
         }
 
 
@@ -54,6 +57,11 @@ namespace CloudService.Infrastructure
                 while (!ct.IsCancellationRequested)
                 {
                     var signal = _q.DequeueOrWait(TimeSpan.FromSeconds(30));
+                    if (signal == null)
+                    {
+                        Thread.Sleep(100);
+                        continue;
+                    }
                     var job = getJobDescriber(signal.JobName);
                     if (job == null)
                     {
@@ -76,12 +84,31 @@ namespace CloudService.Infrastructure
                         }
                         else
                         {
-                            _workerManager.StartNew(_scope, job, _cancelTokenSource.Token, _context, _q);
+                            _workerManager.StartNew(_scope, job, _cancelTokenSource.Token, _q, _hs);
                         }
+                    }
+                    else if (signal.Type == SignalType.JobScheduled)
+                    {
+                        _workerManager.StartNew(_scope, job, _cancelTokenSource.Token, _q, _hs);
                     }
                 }
                 _logger.Warn($"stopped");
             }, token, token);
+        }
+
+        public void Stop()
+        {
+
+            _cancelTokenSource.Cancel();
+            var task = Task.Factory.StartNew(() =>
+            {
+                while (_workerManager.Workers.Any())
+                {
+                    _logger.Info($"waiting for running job complete, {_workerManager.Workers.Count} tasks left");
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
+                }
+            });
+            task.Wait(TimeSpan.FromSeconds(60));
         }
 
         private bool consumeDesceaseSignal(ISignal completedSignal)
