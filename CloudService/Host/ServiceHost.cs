@@ -28,11 +28,7 @@ namespace CloudService.Host
         private List<Action<ContainerBuilder>> _buildActions;
         public IServiceProvider Container { get; internal set; }
         public IServiceCollection Services { get; private set; }
-        private bool _isScheduler = false;
-        internal bool IsScheduler => _isScheduler;
-
-        private bool _isWorker = false;
-        internal bool IsWorker => _isWorker;
+        
 
         public ServiceHost(IServiceCollection services)
         {
@@ -48,6 +44,10 @@ namespace CloudService.Host
             _buildActions.Add(b => b.RegisterType<WebSocketMessageBroadcaster>().As<IMessageBroadcaster>().SingleInstance());
             _buildActions.Add(b => b.RegisterType<JobWorkerManager>().As<IJobWorkerManager>().SingleInstance());
             _buildActions.Add(b => b.Register<IHostConifuration>(c => new HostConfiguration()).SingleInstance());
+            _buildActions.Add(b =>
+            {
+                b.RegisterType<JobService>().As<IJobService>().SingleInstance();
+            });
         }
 
         public ServiceHost ConfigService(Action<IHostConifuration> configurationOptions)
@@ -76,7 +76,7 @@ namespace CloudService.Host
 
         private void ScheduleJob<T>(string name, int requestThreads, string cronExpression, JobType jobType) where T : IJob
         {
-            _isScheduler = true;
+            var internalName = typeof(T).FullName;
             CrontabSchedule schedule = null;
             if (jobType == JobType.Scheduled)
             {
@@ -88,28 +88,13 @@ namespace CloudService.Host
 
             _buildActions.Add(b =>
             {
-                b.Register(c => new JobDescriber<T>(name, requestThreads, cronExpression, jobType)).AsSelf().AsImplementedInterfaces().Named<JobDescriber<T>>(name).SingleInstance();
-                b.Register(c => new JobScheduler<T>(c.Resolve<JobDescriber<T>>(), c.Resolve<IQueue>())).AsSelf().AsImplementedInterfaces().Named<JobScheduler<T>>(name).SingleInstance();
+                b.Register(c => new JobDescriber<T>(name, requestThreads, cronExpression, jobType, internalName)).AsSelf().AsImplementedInterfaces().Named<JobDescriber<T>>(internalName).SingleInstance();
+                b.Register(c => new JobScheduler<T>(c.Resolve<JobDescriber<T>>(), c.Resolve<IQueue>())).AsSelf().AsImplementedInterfaces().Named<JobScheduler<T>>(internalName).SingleInstance();
+                b.RegisterType(typeof(T)).AsImplementedInterfaces().Named<IJob>(internalName).InstancePerLifetimeScope();
             });
         }
 
-        public ServiceHost OnDuty<T>(string name) where T : IJob
-        {
-            if (!_isWorker)
-            {
-                _isWorker = true;
-                _buildActions.Add(b =>
-                {
-                    b.RegisterType<JobService>().As<IJobService>().SingleInstance();
-                });
-            }
 
-            _buildActions.Add(b =>
-            {
-                b.RegisterType(typeof(T)).AsImplementedInterfaces().Named<IJob>(name).InstancePerLifetimeScope();
-            });
-            return this;
-        }
 
         public void BuildServies()
         {
@@ -119,20 +104,13 @@ namespace CloudService.Host
         internal bool Start()
         {
             _logger.Info("CloudService is staring");
-            if (!_isWorker && !_isScheduler)
-            {
-                return false;
-            }
-            if (_isScheduler)
-            {
-                var scheduler = this.Container.GetService<ScheduleManager>();
-                scheduler.Start();
-            }
-            if (_isWorker)
-            {
-                var jobService = this.Container.GetService<IJobService>();
-                jobService.Start();
-            }
+
+            var scheduler = this.Container.GetService<ScheduleManager>();
+            scheduler.Start();
+
+            var jobService = this.Container.GetService<IJobService>();
+            jobService.Start();
+
             _logger.Info("CloudService is started");
             return true;
         }
@@ -140,16 +118,12 @@ namespace CloudService.Host
         internal void Stop()
         {
             _logger.Info("CloudService is stopping");
-            if (_isScheduler)
-            {
-                var scheduler = this.Container.GetService<ScheduleManager>();
-                scheduler.Stop();
-            }
-            if (_isWorker)
-            {
-                var jobService = this.Container.GetService<IJobService>();
-                jobService.Stop();
-            }
+
+            var scheduler = this.Container.GetService<ScheduleManager>();
+            scheduler.Stop();
+
+            var jobService = this.Container.GetService<IJobService>();
+            jobService.Stop();
         }
     }
 }

@@ -56,7 +56,7 @@ namespace CloudService.Scheduler
                         {
                             Describer.Cron.NextTime = Describer.Cron.Crontab.GetNextOccurrence(now);
                             Describer.Cron.LastScheduledTime = now;
-                            _queue.Enqueue(new Signal(SignalType.JobScheduled, Describer.Name), Describer.RequestThreads);
+                            _queue.Enqueue(new Signal(SignalType.JobScheduled, Describer.Name, Describer.InternalName), Describer.RequestThreads);
                         }
                         Thread.Sleep(100);
                     }
@@ -64,7 +64,7 @@ namespace CloudService.Scheduler
             }
             else
             {
-                _queue.Enqueue(new Signal(SignalType.JobScheduled, Describer.Name), Describer.RequestThreads);
+                _queue.Enqueue(new Signal(SignalType.JobScheduled, Describer.Name, Describer.InternalName), Describer.RequestThreads);
             }
         }
 

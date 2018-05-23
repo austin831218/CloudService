@@ -17,8 +17,7 @@ namespace TestHost
             {
                 s.ScheduleJob<TestCronJob1>("cron1", 2, "0 0/1 * * * *")
                     .AddRepeatingJob<RepeatingJob1>("rep1", 3)
-                    .OnDuty<TestCronJob1>("cron1")
-                    .OnDuty<RepeatingJob1>("rep1").BuildServies();
+                    .BuildServies();
             })
             .UseContentRoot(Directory.GetCurrentDirectory())
             .UseStartup<Startup>()

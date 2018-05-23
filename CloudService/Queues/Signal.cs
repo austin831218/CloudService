@@ -8,6 +8,7 @@ namespace CloudService.Queues
     {
         SignalType Type { get; }
         string JobName { get; }
+        string InternalName { get; }
         string Data { get; }
     }
 
@@ -16,11 +17,13 @@ namespace CloudService.Queues
         public SignalType Type { get; private set; }
         public string JobName { get; private set; }
         public string Data { get; private set; }
+        public string InternalName { get; private set; }
 
-        public Signal(SignalType type, string jobName, string data = null)
+        public Signal(SignalType type, string jobName, string internalName, string data = null)
         {
             this.Type = type;
             this.JobName = jobName;
+            this.InternalName = internalName;
             this.Data = data;
         }
     }

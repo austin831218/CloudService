@@ -51,23 +51,23 @@ namespace CloudService.Infrastructure
                 IJob job = null;
                 try
                 {
-                    job = scope.ResolveNamed<IJob>(_describer.Name);
+                    job = scope.ResolveNamed<IJob>(_describer.InternalName);
                 }
                 catch (Exception ex)
                 {
 
-                    _context.Fatal(ex, $"Can't resolve job {_describer.Name}");
+                    _context.Fatal(ex, $"Can't resolve job {_describer.InternalName} {_describer.Name}");
                 }
                 try
                 {
-                    _context.Info($"Job {_describer.Name} staring");
+                    _context.Info($"Job {_describer.InternalName} {_describer.Name} staring");
                     job.Execute(_context, _linkedCTS.Token);
-                    _context.Info($"Job {_describer.Name} execute completed");
-                    _q.Enqueue(new Signal(SignalType.JobCompleted, _describer.Name), 1);
+                    _context.Info($"Job {_describer.InternalName} {_describer.Name} execute completed");
+                    _q.Enqueue(new Signal(SignalType.JobCompleted, _describer.Name, _describer.InternalName), 1);
                 }
                 catch (Exception ex)
                 {
-                    _context.Error(ex, $"Execute job {_describer.Name} failed");
+                    _context.Error(ex, $"Execute job {_describer.InternalName} {_describer.Name} failed");
                     _q.Enqueue(new Signal(SignalType.JobError, _describer.Name, ex.Message), 1);
                 }
 
