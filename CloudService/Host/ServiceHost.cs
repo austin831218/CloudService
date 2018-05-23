@@ -24,11 +24,10 @@ namespace CloudService.Host
 {
     public class ServiceHost
     {
-        private readonly NLog.ILogger _logger = LogManager.GetCurrentClassLogger();
         private List<Action<ContainerBuilder>> _buildActions;
         public IServiceProvider Container { get; internal set; }
         public IServiceCollection Services { get; private set; }
-        
+
 
         public ServiceHost(IServiceCollection services)
         {
@@ -38,15 +37,16 @@ namespace CloudService.Host
            {
                b.Register(c => this).SingleInstance();
            });
-            _buildActions.Add(b => b.RegisterType<MemoryQueue>().As<IQueue>().SingleInstance());
-            _buildActions.Add(b => b.RegisterType<ScheduleManager>().SingleInstance());
-            _buildActions.Add(b => b.RegisterType<MemoryHistoryStore>().As<IHistoryStore>().SingleInstance());
-            _buildActions.Add(b => b.RegisterType<WebSocketMessageBroadcaster>().As<IMessageBroadcaster>().SingleInstance());
-            _buildActions.Add(b => b.RegisterType<JobWorkerManager>().As<IJobWorkerManager>().SingleInstance());
-            _buildActions.Add(b => b.Register<IHostConifuration>(c => new HostConfiguration()).SingleInstance());
             _buildActions.Add(b =>
             {
+                b.RegisterType<ScheduleManager>().SingleInstance();
+                b.RegisterType<MemoryQueue>().As<IQueue>().SingleInstance();
+                b.RegisterType<MemoryHistoryStore>().As<IHistoryStore>().SingleInstance();
+                b.RegisterType<WebSocketMessageBroadcaster>().As<IMessageBroadcaster>().SingleInstance();
+                b.RegisterType<JobWorkerManager>().As<IJobWorkerManager>().SingleInstance();
+                b.Register<IHostConifuration>(c => new HostConfiguration()).SingleInstance();
                 b.RegisterType<JobService>().As<IJobService>().SingleInstance();
+                b.RegisterGeneric(typeof(ServiceLogger<>)).AsImplementedInterfaces().SingleInstance();
             });
         }
 
@@ -103,7 +103,8 @@ namespace CloudService.Host
 
         internal bool Start()
         {
-            _logger.Info("CloudService is staring");
+            var logger = this.Container.GetService<IServiceLogger<ServiceHost>>();
+            logger.Info("CloudService is staring");
 
             var scheduler = this.Container.GetService<ScheduleManager>();
             scheduler.Start();
@@ -111,19 +112,21 @@ namespace CloudService.Host
             var jobService = this.Container.GetService<IJobService>();
             jobService.Start();
 
-            _logger.Info("CloudService is started");
+            logger.Info("CloudService is started");
             return true;
         }
 
         internal void Stop()
         {
-            _logger.Info("CloudService is stopping");
+            var logger = this.Container.GetService<IServiceLogger<ServiceHost>>();
+            logger.Info("CloudService is stopping");
 
             var scheduler = this.Container.GetService<ScheduleManager>();
             scheduler.Stop();
 
             var jobService = this.Container.GetService<IJobService>();
             jobService.Stop();
+            logger.Info("CloudService is stopped");
         }
     }
 }

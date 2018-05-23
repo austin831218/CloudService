@@ -9,7 +9,7 @@ namespace TestHost.Jobs
 {
     public class RepeatingJob1 : IJob
     {
-        public void Execute(IServiceContext serviceContext, CancellationToken token)
+        public void Execute(IJobContext serviceContext, CancellationToken token)
         {
 
             int count = 10;

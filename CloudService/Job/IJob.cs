@@ -6,6 +6,6 @@ namespace CloudService.Job
 {
     public interface IJob
     {
-        void Execute(IServiceContext serviceContext, CancellationToken token);
+        void Execute(IJobContext serviceContext, CancellationToken token);
     }
 }

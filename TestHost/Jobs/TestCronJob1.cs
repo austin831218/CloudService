@@ -11,7 +11,7 @@ namespace TestHost.Jobs
     public class TestCronJob1 : IJob
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        public void Execute(IServiceContext serviceContext, CancellationToken token)
+        public void Execute(IJobContext serviceContext, CancellationToken token)
         {
 
             int count = 10;

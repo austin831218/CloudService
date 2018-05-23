@@ -42,7 +42,7 @@ namespace CloudService.Infrastructure
             IHistoryStore hs)
         {
             _ss.Wait();
-            var context = new ServiceContext(describer, q, hs, Guid.NewGuid());
+            var context = new JobContext(describer, q, hs, Guid.NewGuid());
             var worker = new JobWorker(scope, describer, tk, q, context, hs);
             worker.Work(w =>
             {

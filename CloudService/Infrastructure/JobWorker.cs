@@ -15,7 +15,7 @@ namespace CloudService.Infrastructure
         private readonly ILifetimeScope _scope;
         private readonly IJobDescriber _describer;
         private readonly CancellationTokenSource _linkedCTS;
-        private readonly IServiceContext _context;
+        private readonly IJobContext _context;
         private readonly IQueue _q;
         private readonly ILogger _logger;
         public Guid ID { get; private set; }
@@ -24,7 +24,7 @@ namespace CloudService.Infrastructure
             IJobDescriber describer,
             CancellationToken tk,
             IQueue q,
-            IServiceContext context,
+            IJobContext context,
             IHistoryStore hs)
         {
             this.ID = context.WorkerId;
