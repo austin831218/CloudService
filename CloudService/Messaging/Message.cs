@@ -24,6 +24,8 @@ namespace CloudService.Messaging
         [DataMember]
         public string JobThreadId { get; set; }
         [DataMember]
+        public long Ticks { get; set; } = DateTime.UtcNow.Ticks; // to js date: var tickDate = new Date(ticks/10000 - 2208988800000);
+        [DataMember]
         public dynamic Data { get; set; }
         [DataMember]
         public string Content { get; set; }

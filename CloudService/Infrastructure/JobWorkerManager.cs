@@ -8,6 +8,7 @@ using System.Threading;
 using CloudService.Host;
 using CloudService.Messaging;
 using System.Threading.Tasks;
+using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware;
 
 namespace CloudService.Infrastructure
 {
@@ -28,10 +29,13 @@ namespace CloudService.Infrastructure
         private readonly IHostConifuration _cfg;
         private readonly SemaphoreSlim _ss;
         private bool _capacityChanging = false;
+        private readonly WebSocketMessageBroadcaster _broadcaster;
 
-        public JobWorkerManager(IHostConifuration cfg)
+        public JobWorkerManager(IHostConifuration cfg,
+            WebSocketMessageBroadcaster broadcaster)
         {
             _cfg = cfg;
+            _broadcaster = broadcaster;
             _ss = new SemaphoreSlim(_cfg.Capacity, _cfg.MaxCapacity);
             Workers = new ConcurrentDictionary<Guid, JobWorker>();
         }
@@ -42,7 +46,7 @@ namespace CloudService.Infrastructure
             IHistoryStore hs)
         {
             _ss.Wait();
-            var context = new JobContext(describer, q, hs, Guid.NewGuid());
+            var context = new JobContext(describer, Guid.NewGuid(), _broadcaster);
             var worker = new JobWorker(scope, describer, tk, q, context, hs);
             worker.Work(w =>
             {

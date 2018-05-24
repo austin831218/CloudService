@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using CloudService.Job;
 using CloudService.Messaging;
+using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware;
 using CloudService.Queues;
 using NLog;
 
@@ -22,23 +23,31 @@ namespace CloudService.Job
     internal class JobContext : IJobContext
     {
         private readonly IJobDescriber _describer;
-        private readonly IQueue _q;
-        private readonly IHistoryStore _hs;
-        private ILogger _logger;
-
+        private readonly ILogger _logger;
+        private readonly WebSocketMessageBroadcaster _broadcaster;
         public Guid WorkerId { get; private set; }
 
-        public JobContext(IJobDescriber describer, IQueue q, IHistoryStore hs, Guid workerId)
+        public JobContext(IJobDescriber describer, Guid workerId, WebSocketMessageBroadcaster broadcaster)
         {
             _describer = describer;
-            _q = q;
-            _hs = hs;
             WorkerId = workerId;
+            _broadcaster = broadcaster;
             _logger = LogManager.GetLogger(describer.Name);
         }
 
         private void log(LogLevel level, string message, Exception ex, params object[] args)
         {
+            var msg = new Message
+            {
+                JobName = _describer.Name,
+                JobThreadId = WorkerId.ToString(),
+                Data = ex,
+                Content = message,
+                Level = level,
+                Ticks = DateTime.UtcNow.Ticks,
+                Type = MessageType.JobLog
+            };
+            _broadcaster.BroadcastMessageAsync(msg).Wait();
             _logger.Log(level, ex, message, args);
         }
 

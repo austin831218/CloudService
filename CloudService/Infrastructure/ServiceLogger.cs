@@ -1,4 +1,5 @@
 ﻿using CloudService.Messaging;
+using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware;
 using CloudService.Queues;
 using NLog;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace CloudService.Infrastructure
 {
-    public interface IServiceLogger<T>
+    internal interface IServiceLogger<T>
     {
         void Trace(string message, params object[] args);
         void Debug(string message, params object[] args);
@@ -17,23 +18,30 @@ namespace CloudService.Infrastructure
         void Fatal(Exception ex, string message, params object[] args);
     }
 
-    public class ServiceLogger<T> : IServiceLogger<T>
+    internal class ServiceLogger<T> : IServiceLogger<T>
     {
 
-        private readonly IQueue _q;
-        private readonly IHistoryStore _hs;
-        private ILogger _logger;
+        private readonly ILogger _logger;
+        private readonly WebSocketMessageBroadcaster _broadcaster;
 
 
-        public ServiceLogger(IQueue q, IHistoryStore hs)
+        public ServiceLogger(WebSocketMessageBroadcaster broadcaster)
         {
-            _q = q;
-            _hs = hs;
+            _broadcaster = broadcaster;
             _logger = LogManager.GetLogger(typeof(T).FullName);
         }
 
         private void log(LogLevel level, string message, Exception ex, params object[] args)
         {
+            var msg = new Message
+            {
+                Data = ex,
+                Content = message,
+                Level = level,
+                Ticks = DateTime.UtcNow.Ticks,
+                Type = MessageType.ServerLog
+            };
+            _broadcaster.BroadcastMessageAsync(msg).Wait();
             _logger.Log(level, ex, message, args);
         }
 

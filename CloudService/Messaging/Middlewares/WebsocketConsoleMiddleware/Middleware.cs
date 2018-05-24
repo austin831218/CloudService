@@ -99,6 +99,10 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
                         socket.Abort();
                     }
                 }
+                catch (Exception ex)
+                {
+                    _logger.Fatal(ex, "un-handled exception");
+                }
             }
 
             await _webSocketHandler.OnDisconnected(socket);
