@@ -5,7 +5,7 @@ namespace CloudService.Messaging
 {
     public interface IMessage
     {
-		string Name { get; set; }
+        MessageType Type { get; set; }
 		LogLevel Level { get; set; }
 		string JobName { get; set; }
 		string JobThreadId { get; set; }

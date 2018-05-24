@@ -5,14 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware;
 
 namespace CloudService.Controllers
 {
     [Route("test")]
-    public class TestController : Controller
+    internal class TestController : Controller
     {
         ServiceHost _host;
-        public TestController(ServiceHost host, IMessageBroadcaster brocaster)
+        public TestController(ServiceHost host, WebSocketMessageBroadcaster brocaster)
         {
             _host = host;
         }

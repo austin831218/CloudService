@@ -19,6 +19,7 @@ using NCrontab;
 using CloudService.Messaging;
 using CloudService.Scheduler;
 using CloudService.Queues;
+using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware;
 
 namespace CloudService.Host
 {
@@ -42,11 +43,12 @@ namespace CloudService.Host
                 b.RegisterType<ScheduleManager>().SingleInstance();
                 b.RegisterType<MemoryQueue>().As<IQueue>().SingleInstance();
                 b.RegisterType<MemoryHistoryStore>().As<IHistoryStore>().SingleInstance();
-                b.RegisterType<WebSocketMessageBroadcaster>().As<IMessageBroadcaster>().SingleInstance();
                 b.RegisterType<JobWorkerManager>().As<IJobWorkerManager>().SingleInstance();
                 b.Register<IHostConifuration>(c => new HostConfiguration()).SingleInstance();
                 b.RegisterType<JobService>().As<IJobService>().SingleInstance();
                 b.RegisterGeneric(typeof(ServiceLogger<>)).AsImplementedInterfaces().SingleInstance();
+                b.RegisterType<WebSocketMessageBroadcaster>().SingleInstance();
+                b.RegisterType<WebsocketConsoleHandler>().SingleInstance();
             });
         }
 

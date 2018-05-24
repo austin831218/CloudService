@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CloudService.Infrastructure;
 using NCrontab;
+using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware;
 
 namespace CloudService.Host
 {
@@ -48,6 +49,8 @@ namespace CloudService.Host
         public virtual void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
             loggerFactory.AddNLog();
+            app.UseWebSockets();
+            app.MapBroadcaster("/wsc", app.ApplicationServices.GetService<WebsocketConsoleHandler>());
             var service = app.ApplicationServices.GetService<ServiceHost>();
             service.Container = app.ApplicationServices;
             service.Start();

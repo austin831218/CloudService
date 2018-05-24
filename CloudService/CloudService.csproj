@@ -23,9 +23,6 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Messaging\" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Job\ICronJob.cs" />
     <Compile Remove="Job\ILongRunningJob.cs" />
     <Compile Remove="Infrastructure\JobArranger.cs" />

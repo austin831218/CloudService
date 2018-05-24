@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NLog;
 
 namespace CloudService.Messaging
 {
+    [DataContract]
     public class Message : IMessage
     {
 
@@ -10,11 +14,18 @@ namespace CloudService.Messaging
         {
         }
 
-        public string Name { get; set; }
+        [DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public MessageType Type { get; set; }
+        [DataMember]
         public LogLevel Level { get; set; }
+        [DataMember]
         public string JobName { get; set; }
+        [DataMember]
         public string JobThreadId { get; set; }
-        public object Data { get; set; }
+        [DataMember]
+        public dynamic Data { get; set; }
+        [DataMember]
         public string Content { get; set; }
     }
 }
