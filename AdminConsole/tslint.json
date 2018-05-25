@@ -46,7 +46,7 @@
     "no-arg": true,
     "no-bitwise": true,
     "no-console": [
-      true,
+      false,
       "debug",
       "info",
       "time",
@@ -115,13 +115,7 @@
       "check-operator",
       "check-separator",
       "check-type"
-    ],
-    "component-selector": [
-      true,
-      "element",
-      "app",
-      "kebab-case"
-    ],
+    ],    
     "no-output-on-prefix": true,
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,

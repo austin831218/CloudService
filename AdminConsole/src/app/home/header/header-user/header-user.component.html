@@ -1,0 +1,35 @@
+<a class="dropdown-toggle" data-toggle="dropdown">
+    <img *ngIf="user.avatar" src="{{user.avatar + '?s=25'}}" class="user-image" alt="User Image">
+    <span class="hidden-xs">{{user.displayName}}</span>
+</a>
+<ul class="dropdown-menu">
+    <!-- User image -->
+    <li class="user-header">
+        <img *ngIf="user.avatar" src="{{user.avatar + '?s=90'}}" class="img-circle" alt="User Image">
+        <p>
+            {{user.name.familyName}} {{user.name.givenName}}
+            <small>{{user.currentLocation}}</small>
+        </p>
+    </li>
+    <!-- Menu Body -->
+    <li class="user-body">
+        <div class="col-xs-4 text-center">
+            <a>Followers</a>
+        </div>
+        <div class="col-xs-4 text-center">
+            <a>Sales</a>
+        </div>
+        <div class="col-xs-4 text-center">
+            <a>Friends</a>
+        </div>
+    </li>
+    <!-- Menu Footer-->
+    <li class="user-footer">
+        <div class="pull-left">
+            <a class="btn btn-default btn-flat" [routerLink]="['/admin']">Profile</a>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default btn-flat" (click)="logout()">Sign out</a>
+        </div>
+    </li>
+</ul>

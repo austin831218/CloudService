@@ -4,6 +4,8 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const AppConfig = {
-  production: false,
-  environment: 'DEV'
+  production: true,
+  environment: 'PROD',
+  logLevel: 1,   // 1 - debug, 2 - info, 3 - warn, 4 - error
+  apiEndpoint: 'ws://localhost:10000/wsc/'
 };

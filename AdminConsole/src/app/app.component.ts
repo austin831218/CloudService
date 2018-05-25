@@ -9,6 +9,8 @@ import { AppConfig } from '../environments/environment';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  private loglevels = ['all', 'debug', 'info', 'warn', 'error'];
+
   constructor(public electronService: ElectronService,
     private translate: TranslateService) {
 
@@ -22,5 +24,20 @@ export class AppComponent {
     } else {
       console.log('Mode web');
     }
+
+    if (AppConfig.logLevel > 0) {
+      window['console']['_log'] = window['console']['log'];
+      window['console']['log'] = function () { };
+    }
+
+    for (let i = 1; i < AppConfig.logLevel; i++) {
+      window['console']['_' + this.loglevels[i]] = window['console'][this.loglevels[i]];
+      window['console'][this.loglevels[i]] = function () { };
+    }
+
+    console.debug('debug');
+    console.info('info');
+    console.warn('warn');
+    console.error('error');
   }
 }
