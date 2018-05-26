@@ -6,6 +6,8 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware.Commands
 {
     internal enum CommandType
     {
-        Test
+        GetLog,
+        ChangeCapacity,
+        StopWorker
     }
 }

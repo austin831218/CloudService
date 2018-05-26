@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Text;
+using CloudService.Infrastructure;
 
 namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
 {
@@ -70,7 +71,7 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
             return Guid.NewGuid().ToString();
         }
 
-        public async Task BroadcastMessageAsync(Message message)
+        public async Task BroadcastMessageAsync(IMessage message)
         {            
             
             foreach (var pair in GetAll())
@@ -90,7 +91,7 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
             }
         }
 
-        public async Task SendMessageAsync(WebSocket socket, Message message)
+        public async Task SendMessageAsync(WebSocket socket, IMessage message)
         {
             if (socket.State != WebSocketState.Open)
                 return;

@@ -13,7 +13,7 @@ namespace CloudService.Infrastructure
     internal class JobWorker
     {
         private readonly ILifetimeScope _scope;
-        private readonly IJobDescriber _describer;
+        public IJobDescriber Describer { get; private set; }
         private readonly CancellationTokenSource _linkedCTS;
         private readonly IJobContext _context;
         private readonly IQueue _q;
@@ -29,11 +29,11 @@ namespace CloudService.Infrastructure
         {
             this.ID = context.WorkerId;
             _scope = scope;
-            _describer = describer;
+            Describer = describer;
             _linkedCTS = CancellationTokenSource.CreateLinkedTokenSource(tk);
             _q = q;
             _context = context;
-            _logger = LogManager.GetLogger(_describer.Name);
+            _logger = LogManager.GetLogger(Describer.Name);
         }
 
         public void Work(Action<JobWorker> callback)
@@ -44,6 +44,12 @@ namespace CloudService.Infrastructure
             });
         }
 
+        public void Stop()
+        {
+            _context.Warn("stopped by admin");
+            _linkedCTS.Cancel();
+        }
+
         private void work()
         {
             using (var scope = _scope.BeginLifetimeScope())
@@ -51,24 +57,24 @@ namespace CloudService.Infrastructure
                 IJob job = null;
                 try
                 {
-                    job = scope.ResolveNamed<IJob>(_describer.InternalName);
+                    job = scope.ResolveNamed<IJob>(Describer.InternalName);
                 }
                 catch (Exception ex)
                 {
 
-                    _context.Fatal(ex, $"Can't resolve job {_describer.InternalName} {_describer.Name}");
+                    _context.Fatal(ex, $"Can't resolve job {Describer.InternalName} {Describer.Name}");
                 }
                 try
                 {
-                    _context.Info($"Job {_describer.InternalName} {_describer.Name} staring");
+                    _context.Info($"Job {Describer.InternalName} {Describer.Name} staring");
                     job.Execute(_context, _linkedCTS.Token);
-                    _context.Info($"Job {_describer.InternalName} {_describer.Name} execute completed");
-                    _q.Enqueue(new Signal(SignalType.JobCompleted, _describer.Name, _describer.InternalName), 1);
+                    _context.Info($"Job {Describer.InternalName} {Describer.Name} execute completed");
+                    _q.Enqueue(new Signal(SignalType.JobCompleted, Describer.Name, Describer.InternalName), 1);
                 }
                 catch (Exception ex)
                 {
-                    _context.Error(ex, $"Execute job {_describer.InternalName} {_describer.Name} failed");
-                    _q.Enqueue(new Signal(SignalType.JobError, _describer.Name, ex.Message), 1);
+                    _context.Error(ex, $"Execute job {Describer.InternalName} {Describer.Name} failed");
+                    _q.Enqueue(new Signal(SignalType.JobError, Describer.Name, ex.Message), 1);
                 }
 
             }

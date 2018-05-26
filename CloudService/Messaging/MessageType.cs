@@ -7,7 +7,8 @@ namespace CloudService.Messaging
     public enum MessageType
     {
         Connected,
-        ServerLog,
-        JobLog
+        Log,
+        BatchLog, // for command - GetLog
+        Statics
     }
 }

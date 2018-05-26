@@ -45,7 +45,7 @@ namespace CloudService.Job
                 Content = message,
                 Level = level,
                 Ticks = DateTime.UtcNow.Ticks,
-                Type = MessageType.JobLog
+                Type = MessageType.Log
             };
             _broadcaster.BroadcastMessageAsync(msg).Wait();
             _logger.Log(level, ex, message, args);

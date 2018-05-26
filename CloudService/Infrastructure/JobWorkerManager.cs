@@ -9,6 +9,7 @@ using CloudService.Host;
 using CloudService.Messaging;
 using System.Threading.Tasks;
 using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware;
+using System.Collections.Generic;
 
 namespace CloudService.Infrastructure
 {
@@ -30,12 +31,15 @@ namespace CloudService.Infrastructure
         private readonly SemaphoreSlim _ss;
         private bool _capacityChanging = false;
         private readonly WebSocketMessageBroadcaster _broadcaster;
+        private readonly IEnumerable<IJobDescriber> _describers;
 
         public JobWorkerManager(IHostConifuration cfg,
-            WebSocketMessageBroadcaster broadcaster)
+            WebSocketMessageBroadcaster broadcaster,
+            IEnumerable<IJobDescriber> describers)
         {
             _cfg = cfg;
             _broadcaster = broadcaster;
+            _describers = describers;
             _ss = new SemaphoreSlim(_cfg.Capacity, _cfg.MaxCapacity);
             Workers = new ConcurrentDictionary<Guid, JobWorker>();
         }
@@ -46,15 +50,23 @@ namespace CloudService.Infrastructure
             IHistoryStore hs)
         {
             _ss.Wait();
+
             var context = new JobContext(describer, Guid.NewGuid(), _broadcaster);
             var worker = new JobWorker(scope, describer, tk, q, context, hs);
+            this.broadcastServiceStatics();
             worker.Work(w =>
             {
                 Workers.TryRemove(w.ID, out JobWorker k);
                 _ss.Release();
+                this.broadcastServiceStatics();
             });
             Workers.TryAdd(worker.ID, worker);
             return worker;
+        }
+
+        private void broadcastServiceStatics()
+        {
+            _broadcaster.BroadcastMessageAsync(new ServiceStatics(_describers, Workers, _cfg, _ss.CurrentCount).GetMessage()).Wait();
         }
 
         public bool ChangeCapacity(int count)
@@ -87,6 +99,7 @@ namespace CloudService.Infrastructure
                 }
             }
             _capacityChanging = false;
+            this.broadcastServiceStatics();
             return true;
 
         }

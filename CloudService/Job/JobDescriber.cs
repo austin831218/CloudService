@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 using CloudService.Job.Scheduler;
 using NCrontab;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CloudService.Job
 {
@@ -14,13 +17,20 @@ namespace CloudService.Job
         ISchedule Cron { get; set; }
         JobType JobType { get; }
     }
-
+    [DataContract]
     internal class JobDescriber<T> : IJobDescriber where T : IJob
     {
+        [DataMember]
         public string Name { get; private set; }
+        [DataMember]
         public string InternalName { get; private set; }
+        [DataMember]
         public int RequestThreads { get; set; }
+        [DataMember]
         public ISchedule Cron { get; set; }
+
+        [DataMember]
+        [JsonConverter(typeof(StringEnumConverter))]
         public JobType JobType { get; private set; }
 
 
