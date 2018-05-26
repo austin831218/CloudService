@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NotificationService } from '../services/';
 
 @Component({
   selector: '.wrapper',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private ns: NotificationService) {
+
+  }
 
   ngOnInit() {
+    console.log(1)
   }
 
 }
