@@ -21,6 +21,7 @@
                             <div class="col-md-2" *ngIf="statics">
                                 <p>Current Server Capacity is {{statics ? statics.Data.Capacity: ''}}</p>
                                 <p>Current Server idle is {{statics ? statics.Data.Available: ''}}</p>
+                                <p>Current {{statics ? statics.Data.QCount: ''}} in job Queue</p>
                                 <form role="form">
                                     <div class="form-group">
                                         <label class="control-label">Change Capacity</label>
@@ -41,7 +42,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title">Jobs</h3>
@@ -58,6 +59,7 @@
                                             <th>Name</th>
                                             <th>Type</th>
                                             <th>Threads</th>
+                                            <th>Active Workers</th>
                                             <th>LastScheduled</th>
                                             <th>Next</th>
                                             <th></th>
@@ -67,6 +69,7 @@
                                             <td>{{j.Describer.Name}}</td>
                                             <td>{{j.Describer.JobType}}</td>
                                             <td>{{j.Describer.RequestThreads}}</td>
+                                            <td>{{j.Workers.length}}</td>
                                             <td>{{j.Describer.Cron ? j.Describer.Cron.LastScheduledTime : ''}}</td>
                                             <td>{{j.Describer.Cron ? j.Describer.Cron.NextTime : ''}}</td>
                                             <td>

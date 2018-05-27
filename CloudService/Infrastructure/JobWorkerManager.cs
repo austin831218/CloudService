@@ -65,10 +65,10 @@ namespace CloudService.Infrastructure
             {
                 Workers.TryRemove(w.ID, out JobWorker k);
                 _ss.Release();
-                this.broadcastServiceStatics();
+                //this.broadcastServiceStatics();
             });
             Workers.TryAdd(worker.ID, worker);
-            this.broadcastServiceStatics();
+            //this.broadcastServiceStatics();
             return worker;
         }
 
@@ -112,7 +112,7 @@ namespace CloudService.Infrastructure
                 Type = MessageType.Notification,
                 Content = $"Server capacity is changed to {count}",
             });
-            this.broadcastServiceStatics();
+            //this.broadcastServiceStatics();
             return true;
         }
 

@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit {
 
   changeCapacity() {
     console.debug(this.capacity);
-    this.ns.sendWSCommand('{}');
+    this.ns.sendWSCommand({ Type: 'ChangeCapacity', Count: this.capacity });
   }
 
 }

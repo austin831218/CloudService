@@ -15,9 +15,9 @@ namespace TestHost
             var host = new WebHostBuilder().UseKestrel()
             .UseCloudService(s =>
             {
-                s.ScheduleJob<TestCronJob1>("cron1", 2, "0 0/1 * * * *")
+                s.ScheduleJob<TestCronJob1>("cron1", 3, "0 0/1 * * * *")
                     .AddRepeatingJob<RepeatingJob1>("rep1", 3)
-                    .AddLongRunningJob<LongRunningJob1>("long1", 4)
+                    .AddLongRunningJob<LongRunningJob1>("long1", 2)
                     .BuildServies();
             })
             .UseContentRoot(Directory.GetCurrentDirectory())

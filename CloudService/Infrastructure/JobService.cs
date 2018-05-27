@@ -59,9 +59,11 @@ namespace CloudService.Infrastructure
                     var signal = _q.DequeueOrWait(TimeSpan.FromSeconds(30));
                     if (signal == null)
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(1000);
+                        _workerManager.broadcastServiceStatics();
                         continue;
                     }
+                    _workerManager.broadcastServiceStatics();
                     var job = getJobDescriber(signal.JobName);
                     if (job == null)
                     {
