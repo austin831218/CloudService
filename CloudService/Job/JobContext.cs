@@ -47,7 +47,7 @@ namespace CloudService.Job
                 Ticks = DateTime.UtcNow.Ticks,
                 Type = MessageType.Log
             };
-            _broadcaster.BroadcastMessageAsync(msg).Wait();
+            _broadcaster.BroadcastMessage(msg);
             _logger.Log(level, ex, message, args);
         }
 

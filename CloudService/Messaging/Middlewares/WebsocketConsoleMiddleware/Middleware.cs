@@ -35,7 +35,7 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
             }
             _logger.Trace("ws request received");
             var socket = await context.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
-            await _webSocketHandler.OnConnected(socket).ConfigureAwait(false);
+            _webSocketHandler.OnConnected(socket);
 
             await Receive(socket, async (result, serializedMessage) =>
             {

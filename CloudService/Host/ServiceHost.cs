@@ -49,6 +49,7 @@ namespace CloudService.Host
                 b.RegisterGeneric(typeof(ServiceLogger<>)).AsImplementedInterfaces().SingleInstance();
                 b.RegisterType<WebSocketMessageBroadcaster>().SingleInstance();
                 b.RegisterType<WebsocketConsoleHandler>().SingleInstance();
+                b.RegisterType<BroadcastMessageQueue>().SingleInstance();
             });
         }
 
@@ -125,6 +126,9 @@ namespace CloudService.Host
 
             var scheduler = this.Container.GetService<ScheduleManager>();
             scheduler.Stop();
+
+            var broadcaster = this.Container.GetService<WebSocketMessageBroadcaster>();
+            broadcaster.Stop();
 
             var jobService = this.Container.GetService<IJobService>();
             jobService.Stop();

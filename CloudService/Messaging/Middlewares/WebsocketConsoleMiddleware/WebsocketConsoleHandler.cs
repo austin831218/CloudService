@@ -20,16 +20,16 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
             Broadcaster = broadcaster;
         }
 
-        public async Task OnConnected(WebSocket socket)
+        public void OnConnected(WebSocket socket)
         {
             Broadcaster.AddSocket(socket);
 
-            await Broadcaster.SendMessageAsync(socket, new Message()
+            Broadcaster.SendMessage(socket, new Message()
             {
                 Type = MessageType.Connected,
                 Level = NLog.LogLevel.Info,
                 Content = Broadcaster.GetId(socket)
-            }).ConfigureAwait(false);
+            });
         }
 
         public virtual async Task OnDisconnected(WebSocket socket)

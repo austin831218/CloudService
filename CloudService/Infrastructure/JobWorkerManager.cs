@@ -52,7 +52,7 @@ namespace CloudService.Infrastructure
             _ss.Wait();
 
             var context = new JobContext(describer, Guid.NewGuid(), _broadcaster);
-            var worker = new JobWorker(scope, describer, tk, q, context, hs);           
+            var worker = new JobWorker(scope, describer, tk, q, context, hs);
             worker.Work(w =>
             {
                 Workers.TryRemove(w.ID, out JobWorker k);
@@ -66,7 +66,7 @@ namespace CloudService.Infrastructure
 
         private void broadcastServiceStatics()
         {
-            _broadcaster.BroadcastMessageAsync(new ServiceStatics(_describers, Workers, _cfg, _ss.CurrentCount).GetMessage()).Wait();
+            _broadcaster.BroadcastMessage(new ServiceStatics(_describers, Workers, _cfg, _ss.CurrentCount).GetMessage());
         }
 
         public bool ChangeCapacity(int count)

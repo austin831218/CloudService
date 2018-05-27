@@ -27,14 +27,16 @@ export class NotificationService {
     interval(5000)
       .subscribe(x => {
         this.sendWSCommand({ Type: 'Ping' });
-      })
+      });
   }
 
   connectWs() {
     this.socket$
       .subscribe(
         (message) => {
-          this._wsBus.next(message);
+          for (let i = 0; i < message.length; i++) {
+            this._wsBus.next(message[i]);
+          }
         },
         (err) => {
           console.error(err);

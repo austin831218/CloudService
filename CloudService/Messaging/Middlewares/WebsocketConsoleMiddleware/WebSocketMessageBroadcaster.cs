@@ -7,6 +7,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Text;
 using NLog;
+using System.Collections.Generic;
 
 namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
 {
@@ -15,9 +16,34 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
         private ILogger _logger = LogManager.GetCurrentClassLogger();
         private ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
         private readonly IHistoryStore _hs;
-        public WebSocketMessageBroadcaster(IHistoryStore hs)
+        private readonly BroadcastMessageQueue _q;
+        private readonly CancellationTokenSource _ts;
+        public WebSocketMessageBroadcaster(IHistoryStore hs, BroadcastMessageQueue q)
         {
             _hs = hs;
+            _q = q;
+            _ts = new CancellationTokenSource();
+            Task.Factory.StartNew((tk) =>
+            {
+                var ct = (CancellationToken)tk;
+                while (!ct.IsCancellationRequested)
+                {
+                    var messages = _q.DequeueOrWait(ct);
+                    if (messages == null || messages.Count == 0) continue;
+                    var bs = messages.FindAll(x => string.IsNullOrEmpty(x.ClientId)).Select(x => x.Message).ToList();
+                    this.BroadcastMessageAsync(bs).Wait();
+                    messages.FindAll(x => !string.IsNullOrEmpty(x.ClientId)).ForEach(x =>
+                    {
+                        this.SendMessageAsync(this.GetSocketById(x.ClientId), new List<IMessage>() { x.Message }).Wait();
+                    });
+                }
+
+            }, _ts.Token, _ts.Token);
+        }
+
+        public void Stop()
+        {
+            _ts.Cancel();
         }
         public WebSocket GetSocketById(string id)
         {
@@ -71,16 +97,23 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
         {
             return Guid.NewGuid().ToString();
         }
-
-        public async Task BroadcastMessageAsync(IMessage message)
+        public void BroadcastMessage(IMessage message)
         {
+            _q.Add(message);
+        }
+        public void SendMessage(WebSocket socket, IMessage message)
+        {
+            _q.Add(message, this.GetId(socket)); ;
+        }
 
+        private async Task BroadcastMessageAsync(List<IMessage> messages)
+        {
             foreach (var pair in GetAll())
             {
                 try
                 {
                     if (pair.Value.State == WebSocketState.Open)
-                        await SendMessageAsync(pair.Value, message).ConfigureAwait(false);
+                        await SendMessageAsync(pair.Value, messages).ConfigureAwait(false);
                 }
                 catch (WebSocketException e)
                 {
@@ -96,12 +129,12 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
             }
         }
 
-        public async Task SendMessageAsync(WebSocket socket, IMessage message)
+        private async Task SendMessageAsync(WebSocket socket, List<IMessage> messages)
         {
             if (socket.State != WebSocketState.Open)
                 return;
 
-            var serializedMessage = JsonConvert.SerializeObject(message);
+            var serializedMessage = JsonConvert.SerializeObject(messages);
             var encodedMessage = Encoding.UTF8.GetBytes(serializedMessage);
             await socket.SendAsync(buffer: new ArraySegment<byte>(array: encodedMessage,
                                                                   offset: 0,
