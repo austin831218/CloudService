@@ -31,8 +31,6 @@ export class NotificationService {
         (err) => console.error(err),
         () => console.warn('Completed!')
       );
-
-    this.socket$.next(new Message());
   }
 
   cast(key: string, data?: any) {
