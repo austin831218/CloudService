@@ -19,14 +19,13 @@ export class NotificationService {
   private separator = ':';
 
   constructor() {
-    console.info('ns service')
     this._eventBus = new Subject<Notification>();
     this._wsBus = new Subject<Message>();
     this.socket$ = webSocket(`${cfg.apiEndpoint}`);
     this.socket$
       .subscribe(
         (message) => {
-          console.debug(message);
+          // console.debug(message);
           this._wsBus.next(message);
         },
         (err) => console.error(err),

@@ -28,6 +28,7 @@ import {
   JsonClientService, NotificationService
 } from './services/';
 import { AuthGuard } from './authGuard';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -57,6 +58,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     PaginationModule.forRoot(),
     HomeModule,
     BrowserAnimationsModule,
+    NgxChartsModule,
     ToastrModule.forRoot({
       timeOut: 10000,
       positionClass: 'toast-top-right',
