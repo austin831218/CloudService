@@ -63,9 +63,9 @@
                                             <th>LastScheduled</th>
                                             <th>Next</th>
                                             <th></th>
-                                            <th></th>
+                                            <th>Change Job Thread</th>
                                         </tr>
-                                        <tr *ngFor="let j of statics.Data.Jobs">
+                                        <tr *ngFor="let j of statics.Data.Jobs; let i = index; trackBy:trackByName ">
                                             <td>{{j.Describer.Name}}</td>
                                             <td>{{j.Describer.JobType}}</td>
                                             <td>{{j.Describer.RequestThreads}}</td>
@@ -74,6 +74,10 @@
                                             <td>{{j.Describer.Cron ? j.Describer.Cron.NextTime : ''}}</td>
                                             <td>
                                                 <button class="btn btn-xs" (click)="viewJobLog(j.Describer.Name)">Log</button>
+                                            </td>
+                                            <td>
+                                                <input name=_{{j.Describer.Name}} [(ngModel)]="changeJobThread[i]">
+                                                <button class="btn btn-xs" (click)="changeJobThread(j.Describer.Name,changeJobThread[i])">Change</button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -92,6 +96,13 @@
                         <h3 class="box-title">Logs - {{loginfo}}</h3>
                         <div class="box-tools pull-right">
                             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <div class="btn-group">
+                                <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a (click)="clearLog()">Clear Log</a></li>
+                                    <li><a (click)="viewJobLog('')">All Log</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div class="box-body">

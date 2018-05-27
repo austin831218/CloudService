@@ -101,9 +101,9 @@ namespace CloudService.Infrastructure
             }
             else
             {
-                for (var i = 0; i < c; i++)
+                for (var i = 0; i < Math.Abs(c); i++)
                 {
-                    _ss.Wait(0);
+                    _ss.Wait();
                 }
             }
             _capacityChanging = false;
@@ -135,6 +135,7 @@ namespace CloudService.Infrastructure
                 }
                 else
                 {
+                    jd.RequestThreads = count;
                     _q.Enqueue(new Signal(SignalType.DecreaseJobThread, jd.Name, jd.InternalName), Math.Abs(diff));
                     if (jd.JobType == JobType.LongRunning) // stop the long running job
                     {

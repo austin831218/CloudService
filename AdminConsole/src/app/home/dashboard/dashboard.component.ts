@@ -11,6 +11,7 @@ import { observable, Observable, Unsubscribable, Subscription } from 'rxjs';
 export class DashboardComponent implements OnInit {
   loginfo = 'all';
   capacity = 0;
+  threadVM = {};
   private lastTime: string;
   private statics: Message;
   colorScheme = {
@@ -65,12 +66,31 @@ export class DashboardComponent implements OnInit {
 
   viewJobLog(name) {
     this.logs = [];
-    this.subscribLog(m => m.JobName === name);
+    if (name) {
+      this.loginfo = name;
+      this.subscribLog(m => m.JobName === name);
+    } else {
+      this.loginfo = 'All';
+      this.subscribLog(m => true);
+    }
   }
 
   changeCapacity() {
     console.debug(this.capacity);
     this.ns.sendWSCommand({ Type: 'ChangeCapacity', Count: this.capacity });
+  }
+
+  clearLog() {
+    this.logs = [];
+  }
+
+  changeJobThread(name, count) {
+    console.debug(name, count);
+    this.ns.sendWSCommand({ Type: 'ChangeJobThread', Count: count, JobName: name });
+  }
+
+  trackByName(index: number, j: any) {
+    return j.Describer.Name;
   }
 
 }
