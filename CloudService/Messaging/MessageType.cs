@@ -8,7 +8,7 @@ namespace CloudService.Messaging
     {
         Connected,
         Log,
-        BatchLog, // for command - GetLog
-        Statics
+        Statics,
+        Notification
     }
 }

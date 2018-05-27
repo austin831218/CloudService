@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Text;
 using NLog;
 using System.Collections.Generic;
+using CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware.Commands;
 
 namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
 {
@@ -99,11 +100,19 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
         }
         public void BroadcastMessage(IMessage message)
         {
+            _hs.Add(message);
             _q.Add(message);
         }
         public void SendMessage(WebSocket socket, IMessage message)
         {
             _q.Add(message, this.GetId(socket)); ;
+        }
+
+        public void SendLog(WebSocket socket, Command cmd)
+        {
+            var logs = _hs.Last(50, cmd.JobName, cmd.WorkerId);
+            logs.Reverse().ToList().ForEach(m => this.SendMessage(socket, m));
+
         }
 
         private async Task BroadcastMessageAsync(List<IMessage> messages)

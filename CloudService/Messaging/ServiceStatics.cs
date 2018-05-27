@@ -13,13 +13,15 @@ namespace CloudService.Messaging
         public int Capacity { get; set; }
         public int MaxCapacity { get; set; }
         public int Available { get; set; }
+        public int QCount { get; set; }
         public List<JobStattics> Jobs { get; set; }
 
-        public ServiceStatics(IEnumerable<IJobDescriber> describers, ConcurrentDictionary<Guid, JobWorker> Workers, IHostConifuration cfg, int available)
+        public ServiceStatics(IEnumerable<IJobDescriber> describers, ConcurrentDictionary<Guid, JobWorker> Workers, IHostConifuration cfg, int available, int qCount)
         {
             this.Capacity = cfg.Capacity;
             this.MaxCapacity = cfg.MaxCapacity;
             this.Available = available;
+            this.QCount = qCount;
             this.Jobs = new List<JobStattics>();
             foreach (var d in describers)
             {

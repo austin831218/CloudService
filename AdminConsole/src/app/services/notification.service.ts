@@ -24,10 +24,10 @@ export class NotificationService {
     this._wsBus = new Subject<Message>();
     this.socket$ = webSocket(`${cfg.apiEndpoint}`);
     this.connectWs();
-    interval(5000)
-      .subscribe(x => {
-        this.sendWSCommand({ Type: 'Ping' });
-      });
+    // interval(5000)
+    //   .subscribe(x => {
+    //     this.sendWSCommand({ Type: 'Ping' });
+    //   });
   }
 
   connectWs() {

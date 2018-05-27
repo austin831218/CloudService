@@ -42,7 +42,7 @@ namespace CloudService.Job
                 JobName = _describer.Name,
                 JobThreadId = WorkerId.ToString(),
                 Data = ex,
-                Content = message,
+                Content = string.Format(message, args),
                 Level = level,
                 Ticks = DateTime.UtcNow.Ticks,
                 Type = MessageType.Log

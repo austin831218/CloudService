@@ -9,6 +9,7 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware.Commands
         Ping,
         GetLog,
         ChangeCapacity,
-        StopWorker
+        StopWorker,
+        ChangeJobThread
     }
 }
