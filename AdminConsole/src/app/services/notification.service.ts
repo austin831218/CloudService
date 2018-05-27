@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Subject, Observable, of } from 'rxjs';
+import { filter, map, retryWhen, delayWhen, retry, delay, tap } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { AppConfig as cfg } from '../../environments/environment';
 import { Message } from '../Models/Message';
+
 
 
 interface Notification {
@@ -22,15 +23,25 @@ export class NotificationService {
     this._eventBus = new Subject<Notification>();
     this._wsBus = new Subject<Message>();
     this.socket$ = webSocket(`${cfg.apiEndpoint}`);
+    this.connectWs();
+  }
+
+  connectWs() {
     this.socket$
       .subscribe(
         (message) => {
           // console.debug(message);
           this._wsBus.next(message);
         },
-        (err) => console.error(err),
+        (err) => {
+          console.error(err);
+          console.warn('re-connect ws in 5 seconds');
+          of(null).pipe(delay(5000)).subscribe(() => {
+            this.connectWs();
+          });
+        },
         () => console.warn('Completed!')
-      );
+      )
   }
 
   cast(key: string, data?: any) {
