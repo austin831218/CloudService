@@ -10,6 +10,7 @@ import { observable, Observable, Unsubscribable, Subscription } from 'rxjs';
 })
 export class DashboardComponent implements OnInit {
   loginfo = 'all';
+  capacity = 0;
   private lastTime: string;
   private statics: Message;
   colorScheme = {
@@ -65,6 +66,11 @@ export class DashboardComponent implements OnInit {
   viewJobLog(name) {
     this.logs = [];
     this.subscribLog(m => m.JobName === name);
+  }
+
+  changeCapacity() {
+    console.debug(this.capacity);
+    this.ns.sendWSCommand('{}');
   }
 
 }

@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Text;
-using CloudService.Infrastructure;
+using NLog;
 
 namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
 {
     internal class WebSocketMessageBroadcaster
     {
+        private ILogger _logger = LogManager.GetCurrentClassLogger();
         private ConcurrentDictionary<string, WebSocket> _sockets = new ConcurrentDictionary<string, WebSocket>();
         private readonly IHistoryStore _hs;
         public WebSocketMessageBroadcaster(IHistoryStore hs)
@@ -72,8 +73,8 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
         }
 
         public async Task BroadcastMessageAsync(IMessage message)
-        {            
-            
+        {
+
             foreach (var pair in GetAll())
             {
                 try
@@ -87,6 +88,10 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware
                     {
                         await RemoveSocket(pair.Value).ConfigureAwait(false);
                     }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex);
                 }
             }
         }

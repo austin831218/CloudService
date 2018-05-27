@@ -52,8 +52,7 @@ namespace CloudService.Infrastructure
             _ss.Wait();
 
             var context = new JobContext(describer, Guid.NewGuid(), _broadcaster);
-            var worker = new JobWorker(scope, describer, tk, q, context, hs);
-            this.broadcastServiceStatics();
+            var worker = new JobWorker(scope, describer, tk, q, context, hs);           
             worker.Work(w =>
             {
                 Workers.TryRemove(w.ID, out JobWorker k);
@@ -61,6 +60,7 @@ namespace CloudService.Infrastructure
                 this.broadcastServiceStatics();
             });
             Workers.TryAdd(worker.ID, worker);
+            this.broadcastServiceStatics();
             return worker;
         }
 

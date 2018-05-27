@@ -18,7 +18,20 @@
                     </div>
                     <div class="box-body">
                         <div class="row">
-                            <div class="col-md-12" style="height:250px;">
+                            <div class="col-md-2" *ngIf="statics">
+                                <p>Current Server Capacity is {{statics ? statics.Data.Capacity: ''}}</p>
+                                <p>Current Server idle is {{statics ? statics.Data.Available: ''}}</p>
+                                <form role="form">
+                                    <div class="form-group">
+                                        <label class="control-label">Change Capacity</label>
+                                        <input [(ngModel)]="capacity" name="capacity" type="number" class="form-control" placeholder="Capacity">
+                                    </div>
+                                    <div>
+                                        <button class="btn" (click)="changeCapacity()">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-10" style="height:250px;">
                                 <ngx-charts-area-chart [scheme]="colorScheme" [results]="data" [gradient]="gradient" [xAxis]="true" [yAxis]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [autoScale]="autoScale">
                                 </ngx-charts-area-chart>
                             </div>

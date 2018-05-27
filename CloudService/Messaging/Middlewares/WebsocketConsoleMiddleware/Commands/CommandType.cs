@@ -6,6 +6,7 @@ namespace CloudService.Messaging.Middlewares.WebsocketConsoleMiddleware.Commands
 {
     internal enum CommandType
     {
+        Ping,
         GetLog,
         ChangeCapacity,
         StopWorker

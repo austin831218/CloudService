@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable, of } from 'rxjs';
-import { filter, map, retryWhen, delayWhen, retry, delay, tap } from 'rxjs/operators';
+import { Subject, Observable, of, interval } from 'rxjs';
+import { filter, map, delay } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { AppConfig as cfg } from '../../environments/environment';
 import { Message } from '../Models/Message';
@@ -16,7 +16,7 @@ interface Notification {
 export class NotificationService {
   private _eventBus: Subject<Notification>;
   private _wsBus: Subject<Message>;
-  private socket$: WebSocketSubject<Message>;
+  private socket$: WebSocketSubject<any>;
   private separator = ':';
 
   constructor() {
@@ -24,13 +24,16 @@ export class NotificationService {
     this._wsBus = new Subject<Message>();
     this.socket$ = webSocket(`${cfg.apiEndpoint}`);
     this.connectWs();
+    interval(5000)
+      .subscribe(x => {
+        this.sendWSCommand({ Type: 'Ping' });
+      })
   }
 
   connectWs() {
     this.socket$
       .subscribe(
         (message) => {
-          // console.debug(message);
           this._wsBus.next(message);
         },
         (err) => {
@@ -41,7 +44,7 @@ export class NotificationService {
           });
         },
         () => console.warn('Completed!')
-      )
+      );
   }
 
   cast(key: string, data?: any) {
@@ -62,6 +65,10 @@ export class NotificationService {
   onWsMessage(f: (m: Message) => boolean): Observable<Message> {
     return this._wsBus.asObservable()
       .pipe(filter(event => f(event)));
+  }
+
+  sendWSCommand(cmd) {
+    this.socket$.next(cmd);
   }
 
 
