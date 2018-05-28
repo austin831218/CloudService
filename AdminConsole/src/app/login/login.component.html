@@ -1,0 +1,17 @@
+<div class="login-bg">
+    <div class="login-wrapper">
+        <span class="logo-lg"><b>Cloud Service</b></span>
+        <div class="box">
+            <div class="content-wrap">
+                <h6>Log in</h6>
+                <form>
+                    <input class="form-control" name="username" type="text" placeholder="Username" [(ngModel)]="vm.username" />
+                    <input class="form-control" name="password" (keydown.Enter)="login()" type="password" placeholder="Password" [(ngModel)]="vm.password" />
+
+                    <button type="button" (click)="login()" class="btn btn-primary login">Log in</button>
+                </form>
+                <span class="version-info">version: 0.0.0.1a</span>
+            </div>
+        </div>
+    </div>
+</div>

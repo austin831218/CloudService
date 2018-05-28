@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Configuration\**" />
+    <Compile Remove="Exceptions\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <None Remove="Configuration\**" />
+    <None Remove="Exceptions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.7" />
+    <PackageReference Include="Autofac" Version="4.8.0" />
+    <PackageReference Include="ncrontab" Version="3.3.0" />
+    <PackageReference Include="NLog" Version="4.5.3" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Job\ICronJob.cs" />
+    <Compile Remove="Job\ILongRunningJob.cs" />
+    <Compile Remove="Infrastructure\JobArranger.cs" />
+    <Compile Remove="Logging\IHistoryStore.cs" />
+  </ItemGroup>
+</Project>

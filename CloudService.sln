@@ -3,19 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Host", "CloudService.Host\CloudService.Host.csproj", "{A6C091EB-1A6E-4BA4-A13A-1A0FCB32253B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Host", "CloudService.Host\CloudService.Host.csproj", "{A6C091EB-1A6E-4BA4-A13A-1A0FCB32253B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Model", "CloudService.Model\CloudService.Model.csproj", "{FD2EF270-C04F-4344-9FC7-246CC634971D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Model", "CloudService.Model\CloudService.Model.csproj", "{FD2EF270-C04F-4344-9FC7-246CC634971D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Common", "CloudService.Common\CloudService.Common.csproj", "{2C4550D6-F16E-4A90-BCCF-209F986F89C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Common", "CloudService.Common\CloudService.Common.csproj", "{2C4550D6-F16E-4A90-BCCF-209F986F89C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Service.WebApi", "CloudService.Service.WebApi\CloudService.Service.WebApi.csproj", "{2849B89E-568D-420F-A7A9-5DA43A0B8A05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Service.WebApi", "CloudService.Service.WebApi\CloudService.Service.WebApi.csproj", "{2849B89E-568D-420F-A7A9-5DA43A0B8A05}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudService.Infrastructure", "CloudService.Infrastructure\CloudService.Infrastructure.csproj", "{8A5C29F4-49C2-4053-85D5-8CD47FD05AC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Infrastructure", "CloudService.Infrastructure\CloudService.Infrastructure.csproj", "{8A5C29F4-49C2-4053-85D5-8CD47FD05AC3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Service.WorkTask", "CloudService.Service.WorkTask\CloudService.Service.WorkTask.csproj", "{4889959E-CB10-4D0D-8D7C-7CA37B3A55A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService.Test", "CloudService.Test\CloudService.Test.csproj", "{94233466-2137-4581-B5A8-A05E6192CE1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudService", "CloudService\CloudService.csproj", "{33A3FE10-10FD-40CB-AD0B-B0E27B942220}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHost", "TestHost\TestHost.csproj", "{8D8CBE56-C226-4219-BB8A-34DD3EB2BB49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{94233466-2137-4581-B5A8-A05E6192CE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94233466-2137-4581-B5A8-A05E6192CE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94233466-2137-4581-B5A8-A05E6192CE1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33A3FE10-10FD-40CB-AD0B-B0E27B942220}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33A3FE10-10FD-40CB-AD0B-B0E27B942220}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33A3FE10-10FD-40CB-AD0B-B0E27B942220}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33A3FE10-10FD-40CB-AD0B-B0E27B942220}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D8CBE56-C226-4219-BB8A-34DD3EB2BB49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D8CBE56-C226-4219-BB8A-34DD3EB2BB49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D8CBE56-C226-4219-BB8A-34DD3EB2BB49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D8CBE56-C226-4219-BB8A-34DD3EB2BB49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
