@@ -13,7 +13,7 @@ export class DashboardComponent implements OnInit {
   capacity = 0;
   threadVM = {};
   private lastTime: string;
-  private statics: Message;
+  statics: Message;
   colorScheme = {
     domain: ['#00c0ef', '#00a65a', '#f39c12', '#dd4b39']
   };
